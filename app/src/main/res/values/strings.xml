@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">StarWars</string>
+    <string name="search">Search</string>
+    <string name="character_name">NAME</string>
+    <string name="birth_year">BIRTH</string>
+    <string name="mass">MASS</string>
+    <string name="hair_color">HAIR COLOR</string>
+    <string name="height">HEIGHT</string>
+    <string name="skin_color">SKIN COLOR</string>
+    <string name="gender">GENDER</string>
+    <string name="eye_color">EYE COLOR</string>
+    <string name="homeworld">HOMEWORLD</string>
+    <string name="films">FILMS</string>
+    <string name="vehicles">VEHICLES</string>
+    <string name="species">SPECIES</string>
+    <string name="starships">STARSHIPS</string>
+    <string name="edited">EDITED</string>
+    <string name="created">CREATED</string>
+    <string name="people">PEOPLE</string>
+    <string name="planets">PLANETS</string>
+</resources>

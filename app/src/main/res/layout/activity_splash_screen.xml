@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="percent"
+            type="com.example.maytheforcebewith_shashankyadav.responses.Percentage" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:background="@drawable/starwarswalp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.SplashScreen">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/pb_people"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:text="@string/people"/>
+        <ProgressBar
+            android:id="@+id/pb_people"
+            android:progress="@{percent.percentPeople}"
+            android:progressBackgroundTint="@color/white"
+            android:progressTint="@color/white"
+            android:background="@color/black"
+            android:indeterminate="false"
+            android:layout_margin="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            style="?android:attr/progressBarStyleHorizontal"
+            app:layout_constraintEnd_toEndOf="parent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/pb_films"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:text="@string/films"/>
+
+        <ProgressBar
+            android:id="@+id/pb_films"
+            android:progress="@{percent.percentFilms}"
+            android:progressBackgroundTint="@color/white"
+            android:progressTint="@color/white"
+            android:indeterminate="false"
+            android:layout_margin="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/pb_people"
+            app:layout_constraintStart_toStartOf="parent"
+            style="?android:attr/progressBarStyleHorizontal"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/pb_species"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:text="@string/species"/>
+        <ProgressBar
+            android:id="@+id/pb_species"
+            android:progress="@{percent.percentSpecies}"
+            android:progressBackgroundTint="@color/white"
+            android:progressTint="@color/white"
+            android:indeterminate="false"
+            android:layout_margin="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/pb_films"
+            app:layout_constraintStart_toStartOf="parent"
+            style="?android:attr/progressBarStyleHorizontal"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/pb_vehicles"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:text="@string/vehicles"/>
+        <ProgressBar
+            android:id="@+id/pb_vehicles"
+            android:progress="@{percent.percentVehicles}"
+            android:progressBackgroundTint="@color/white"
+            android:progressTint="@color/white"
+            android:indeterminate="false"
+            android:layout_margin="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/pb_species"
+            app:layout_constraintStart_toStartOf="parent"
+            style="?android:attr/progressBarStyleHorizontal"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/pb_starships"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:text="@string/starships"/>
+
+        <ProgressBar
+            android:id="@+id/pb_starships"
+            android:progress="@{percent.percentStarships}"
+            android:progressBackgroundTint="@color/white"
+            android:progressTint="@color/white"
+            android:indeterminate="false"
+            android:layout_margin="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/pb_vehicles"
+            app:layout_constraintStart_toStartOf="parent"
+            style="?android:attr/progressBarStyleHorizontal"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/pb_planet"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:text="@string/planets"/>
+
+        <ProgressBar
+            android:id="@+id/pb_planet"
+            android:progress="@{percent.percentPlanet}"
+            android:progressBackgroundTint="@color/white"
+            android:progressTint="@color/white"
+            android:indeterminate="false"
+            android:layout_margin="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/pb_starships"
+            app:layout_constraintStart_toStartOf="parent"
+            style="?android:attr/progressBarStyleHorizontal"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
