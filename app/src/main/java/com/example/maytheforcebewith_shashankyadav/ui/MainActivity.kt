@@ -184,13 +184,11 @@ class MainActivity : AppCompatActivity(), IPresenter{
     }
 
     private fun activatedOnce(): Boolean {
-
         if (activatedOnce == null){
             activatedOnce = true
         }else {
             activatedOnce = false
         }
-
         return activatedOnce as Boolean
 
     }
