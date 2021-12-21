@@ -34,10 +34,7 @@ class CustomAdapter : RecyclerView.Adapter<CustomAdapter.MyViewHolder>(){
     @SuppressLint("NotifyDataSetChanged")
     fun setData(article: ArrayList<Results1>, context: Context, callback: RecyclerItemClickListener){
         this.context = context
-        articles = ArrayList()
-        for(items in article){
-            articles.add(items)
-        }
+        articles = article
         this.recyclerItemClickListener = callback
         notifyDataSetChanged()
     }
