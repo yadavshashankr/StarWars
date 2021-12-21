@@ -9,7 +9,7 @@ class OkHttpClients {
         var okHttpClient: OkHttpClient? = null
 
 
-         fun getOkHttpClient1(): OkHttpClient{
+        @Synchronized fun getOkHttpClient1(): OkHttpClient{
 
             if (okHttpClient == null){
                 okHttpClient = OkHttpClient.Builder().connectTimeout(2, TimeUnit.MINUTES).writeTimeout(2, TimeUnit.MINUTES)

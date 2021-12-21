@@ -27,7 +27,7 @@ interface ApiCall {
     companion object Client {
     // creating api call for Star Wars api
         var retroClient: ApiCall? = null
-        fun create(): ApiCall {
+        @Synchronized fun create(): ApiCall {
             if (retroClient == null){
                 val retrofit = RetroInstance.getRetroInstance(ApplicationConstant.APP_URL)
                 retroClient = retrofit.create(ApiCall::class.java)

@@ -20,7 +20,7 @@ interface FavApiCall {
     companion object Client {
     // creating api call for Favorites webhook
         var retroClient: FavApiCall? = null
-        fun create(): FavApiCall {
+        @Synchronized  fun create(): FavApiCall {
             if (retroClient == null){
 
                 val retrofit = RetroInstance.getRetroInstance(ApplicationConstant.APP_URL_FAV)

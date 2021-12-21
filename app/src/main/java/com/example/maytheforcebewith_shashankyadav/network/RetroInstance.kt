@@ -9,7 +9,7 @@ class RetroInstance {
     companion object{
 
 
-        fun getRetroInstance(url: String): Retrofit {
+        @Synchronized fun getRetroInstance(url: String): Retrofit {
             // receive retrofit instance
             return Retrofit.Builder().baseUrl(url).
             addConverterFactory(GsonConverterFactory.create()).client(OkHttpClients.getOkHttpClient1()).
