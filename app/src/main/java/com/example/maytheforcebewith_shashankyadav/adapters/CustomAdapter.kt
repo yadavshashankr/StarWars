@@ -21,8 +21,18 @@ import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Compan
 import com.example.maytheforcebewith_shashankyadav.responses.FavData1
 import com.example.maytheforcebewith_shashankyadav.responses.Results1
 import com.example.maytheforcebewith_shashankyadav.ui.CharacterDetail
+import com.example.maytheforcebewith_shashankyadav.utils.Tools
+import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.apiFavourite
+import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.cotractItemRow
+import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.expanditemRow
+import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.favourite
+import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.resetFavouite
+import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.rowItemExpanded
+import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setFavourite
+import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setFavouriteIcon
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setHeaderToBlack
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setHeaderToWhite
+import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setUnFavouriteIcon
 
 
 class CustomAdapter : RecyclerView.Adapter<CustomAdapter.MyViewHolder>(){
@@ -53,68 +63,40 @@ class CustomAdapter : RecyclerView.Adapter<CustomAdapter.MyViewHolder>(){
 
         fun bind() {
             // if size of list is 1 that means its a search and show the view in expanded form and changing colors of header
-            if (articles.size == 1){
-                applicationBinding.rlExpand.visibility = View.VISIBLE
-                applicationBinding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24_black)
-                rotateDown(applicationBinding.ivArrow)
-                setHeaderToWhite(context, applicationBinding)
-            }else{
-                applicationBinding.rlExpand.visibility = View.GONE
-                applicationBinding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
-                rotateUp(applicationBinding.ivArrow)
-                setHeaderToBlack(context, applicationBinding)
-            }
 
+            when(articles.size == 1){
+                true -> expanditemRow(applicationBinding, position, itemView, context, recyclerItemClickListener)
+                false -> cotractItemRow(applicationBinding, context)
+            }
             // clicking on the arrow on item in list will expand the view changing colors of header
             applicationBinding.ivArrow.setOnClickListener {
-                if (applicationBinding.rlExpand.visibility == View.VISIBLE){
-                    applicationBinding.rlExpand.visibility = View.GONE
-                    applicationBinding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
-                    rotateUp(applicationBinding.ivArrow)
-                    setHeaderToBlack(context, applicationBinding)
-                }else{
-                    applicationBinding.rlExpand.visibility = View.VISIBLE
-                    applicationBinding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24_black)
-                    rotateDown(applicationBinding.ivArrow)
-                    setHeaderToWhite(context, applicationBinding)
-                    recyclerItemClickListener?.onItemClick(null, position, itemView)
+
+                when(rowItemExpanded(applicationBinding)){
+                    true -> cotractItemRow(applicationBinding, context)
+                    false ->expanditemRow(applicationBinding, position, itemView, context, recyclerItemClickListener)
                 }
+
             }
             /* clicking on fav icon will send data to the webhook, save the characters selected data on the
             data object of the list and also changing the icon's selected state
             */
             applicationBinding.ivFav.setOnClickListener {
-                if (applicationBinding.ivFav.tag == R.drawable.ic_baseline_favorite_border_24){
-                    applicationBinding.ivFav.tag = 1
-                    applicationBinding.ivFav.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_baseline_favorite_24))
-                    val favData = FavData1(applicationBinding.result?.name, true)
-                    recyclerItemClickListener?.onItemClick(favData, position, itemView)
-                    applicationBinding.result?.fav = true
-
-                }else{
-                    applicationBinding.ivFav.tag = R.drawable.ic_baseline_favorite_border_24
-                    applicationBinding.ivFav.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_baseline_favorite_border_24))
-                    val favData = FavData1(applicationBinding.result?.name, false)
-                    recyclerItemClickListener?.onItemClick(favData, position, itemView)
-                    applicationBinding.result?.fav = false
+                when(apiFavourite(applicationBinding)){
+                    false -> setFavourite(applicationBinding, position, itemView, context, recyclerItemClickListener)
+                    true -> resetFavouite(applicationBinding, position, itemView, context, recyclerItemClickListener)
                 }
             }
-
             // if data received within list already has favourites then it will be processed here
-            if (applicationBinding.result?.fav as Boolean){
-                applicationBinding.ivFav.setImageResource(R.drawable.ic_baseline_favorite_24)
-            }else{
-                applicationBinding.ivFav.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+            when(favourite(applicationBinding)){
+                true -> setFavouriteIcon(applicationBinding)
+                false -> setUnFavouriteIcon(applicationBinding)
             }
-
             // clicking on header of item of list will send user to next activity
             applicationBinding.llHead.setOnClickListener {
-
                 context?.startActivity(Intent(context, CharacterDetail::class.java).apply {
                     putExtra("character", articles.get(absoluteAdapterPosition))
                 })
             }
-
         }
     }
 

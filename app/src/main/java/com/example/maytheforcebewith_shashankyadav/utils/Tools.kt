@@ -1,10 +1,13 @@
 package com.example.maytheforcebewith_shashankyadav.utils
 
 import android.content.Context
+import android.view.View
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import com.example.maytheforcebewith_shashankyadav.R
 import com.example.maytheforcebewith_shashankyadav.databinding.ItemBinding
+import com.example.maytheforcebewith_shashankyadav.globals.RecyclerItemClickListener
+import com.example.maytheforcebewith_shashankyadav.responses.FavData1
 
 class Tools {
 
@@ -64,6 +67,62 @@ class Tools {
                 ?.let { it1 -> applicationBinding.birth.setTextColor(it1) }
             applicationBinding.llHead.setBackgroundResource(R.color.white)
         }
+
+        fun setUnFavouriteIcon(applicationBinding: ItemBinding) {
+            applicationBinding.ivFav.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+        }
+
+        fun setFavouriteIcon(applicationBinding: ItemBinding) {
+            return applicationBinding.ivFav.setImageResource(R.drawable.ic_baseline_favorite_24)
+        }
+
+        fun favourite(applicationBinding: ItemBinding): Boolean {
+            return applicationBinding.result?.fav as Boolean
+        }
+
+        fun expanditemRow(applicationBinding: ItemBinding, position: Int, itemView: View, context: Context?,
+        recyclerItemClickListener: RecyclerItemClickListener?) {
+            applicationBinding.rlExpand.visibility = View.VISIBLE
+            applicationBinding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24_black)
+            rotateDown(applicationBinding.ivArrow)
+            setHeaderToWhite(context, applicationBinding)
+            recyclerItemClickListener?.onItemClick(null, position, itemView)
+        }
+
+        fun cotractItemRow(applicationBinding: ItemBinding, context: Context?) {
+            applicationBinding.rlExpand.visibility = View.GONE
+            applicationBinding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
+            rotateUp(applicationBinding.ivArrow)
+            setHeaderToBlack(context, applicationBinding)
+        }
+
+        fun rowItemExpanded(applicationBinding: ItemBinding): Boolean {
+            return applicationBinding.rlExpand.visibility == View.VISIBLE
+        }
+
+        fun resetFavouite(applicationBinding: ItemBinding, position: Int, itemView: View, context: Context?,
+                                  recyclerItemClickListener: RecyclerItemClickListener?) {
+            applicationBinding.ivFav.tag = R.drawable.ic_baseline_favorite_border_24
+            applicationBinding.ivFav.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_baseline_favorite_border_24))
+            val favData = FavData1(applicationBinding.result?.name, false)
+            recyclerItemClickListener?.onItemClick(favData, position, itemView)
+            applicationBinding.result?.fav = false
+        }
+
+        fun setFavourite(applicationBinding: ItemBinding, position: Int, itemView: View, context: Context?,
+                                 recyclerItemClickListener: RecyclerItemClickListener?) {
+            applicationBinding.ivFav.tag = 1
+            applicationBinding.ivFav.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_baseline_favorite_24))
+            val favData = FavData1(applicationBinding.result?.name, true)
+            recyclerItemClickListener?.onItemClick(favData, position, itemView)
+            applicationBinding.result?.fav = true
+        }
+
+        fun apiFavourite(applicationBinding: ItemBinding): Boolean {
+            return applicationBinding.ivFav.tag == R.drawable.ic_baseline_favorite_border_24
+        }
+
+
 
         fun isSpaceInString(string: String?): Boolean{
             if (string?.contains(" ") == true){

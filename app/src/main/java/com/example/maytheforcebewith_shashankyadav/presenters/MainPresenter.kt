@@ -64,6 +64,15 @@ class MainPresenter: CoroutineScope{
         println("Caught $exception")
     }
 
+    private var jobPlanets: Job? = Job()
+    private var jobPeople: Job? = Job()
+    private var jobSpecies: Job? = Job()
+    private var jobFilms: Job? = Job()
+    private var jobVehicles: Job? = Job()
+    private var jobStarships: Job? = Job()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
+
     constructor(presenter : IPresenter){
         if (iPresenter == null){
             iPresenter  = presenter
@@ -72,37 +81,22 @@ class MainPresenter: CoroutineScope{
     }
 
      fun getPlanetsApis(page: Int): Percentage {
-
-
-
-             jobPlanets = CoroutineScope(Dispatchers.IO).launch {
-
-
-                     supervisorScope {
+         jobPlanets = CoroutineScope(Dispatchers.IO).launch {
+                 supervisorScope {
                          val planetsService = ApiCall.create()
                          getPlanetsTask = async(handler) {
                              planetsService.getPlanets(page)
                          }
-
                          try {
                              planetsTask = getPlanetsTask.await()
-
                              withContext(Dispatchers.Main + jobPlanets as Job) {
                                  try {
                                      if (planetsTask?.isSuccessful as Boolean) {
 
                                          // calculate First Page and Last Page on basis of total item counts and 10 items per page
-                                         if (planetsTask?.body()?.count as Int % 10 != 0 && planet_firstStart == null) {
-                                             // increase End Page by 1 if remainder of items is found
-                                             PLANET_END_PAGE =
-                                                 (planetsTask?.body()?.count as Int / 10) + 1
-                                             planet_firstStart = true
-                                             planetArticles = ArrayList()
-                                         } else if (planetsTask?.body()?.count as Int % 10 == 0 && planet_firstStart == null) {
-                                             PLANET_END_PAGE =
-                                                 (planetsTask?.body()?.count as Int / 10)
-                                             planet_firstStart = true
-                                         }
+
+                                          calculatePlanetsFirstPageLastPage()
+
 
                                          // add received results in the Global arraylist
                                          for (i in planetsTask?.body()?.results as ArrayList<Results1>) {
@@ -110,66 +104,30 @@ class MainPresenter: CoroutineScope{
                                          }
 
                                          // calculating percentage of api completion on the basis of END Page
-                                         planetPercent = (page / PLANET_END_PAGE) * 100
 
-                                         // create object and send it to the requiring classes
-                                         percent = Percentage(
-                                             peoplePercent,
-                                             planetPercent,
-                                             filmsPercent,
-                                             speciesPercent,
-                                             vehiclesPercent,
-                                             starshipsPercent
-                                         )
-                                         percent.let { iPresenter?.onApiPercentage(it) }
-
+                                         updatePlanetPercentage(page)
 
                                          /* if further pages need to be traversed then set firstStart value as true
                                      and if current page reaches last page then change the value of firstStart to false
                                       */
-                                         if (planetsTask?.body()?.count as Int % 10 != 0) {
-                                             if (PLANET_START_PAGE == PLANET_END_PAGE) {
-                                                 planet_firstStart = false
-                                             }
-                                         } else {
-                                             if (PLANET_START_PAGE == PLANET_END_PAGE) {
-                                                 planet_firstStart = false
-                                             }
-                                         }
+
+                                         setFlagIfPlanetPagesTraversed()
 
                                          // increment page number after every successful api call
                                          PLANET_START_PAGE++
 
                                          // if pages are still being visited, cancel the coroutine job and restart it
-                                         if (PLANET_START_PAGE <= PLANET_END_PAGE) {
-                                             if (jobPlanets?.isActive as Boolean) {
-                                                 jobPlanets?.cancel()
-                                                 jobPlanets = null
-                                                 planetsTask = null
-                                                 try {
-                                                     getPlanetsApis(PLANET_START_PAGE)
-                                                 } catch (e: Exception) {
-                                                     e.printStackTrace()
-                                                 }
+                                         if (planestsPageTraversing()) {
 
+                                          cancelPlanetCoroutineJobandRecallApi()
 
-                                             }
                                          }
                                          /* if firstStart is false that means all the pages has been traversed time to finally
                                      quit making api calls and cancel the coroutine job
                                       */
-                                         if (planet_firstStart == false) {
-                                             jobPlanets?.cancel()
-                                             jobPlanets = null
-                                             planetsTask = null
-                                             planet_firstStart = null
-                                             PLANET_START_PAGE = 1
-                                             planetArticles?.let {
-                                                 iPresenter?.onSuccess(
-                                                     it,
-                                                     "Planets"
-                                                 )
-                                             }
+                                         if (planetsPageTraversed()) {
+
+                                          cancelPlanetCoroutineJobandApiCall()
 
                                          }
                                      } else if (!planetsTask?.isSuccessful!!) {
@@ -178,40 +136,28 @@ class MainPresenter: CoroutineScope{
                                  } catch (e: Exception) {
                                      e.printStackTrace()
                                  }
-
                              }
                          } catch (e: IOException) {
                              e.printStackTrace()
                              iPresenter?.onFailure()
                          }
-
-                         // Starting coroutine with coroutine's scope and add job to it
-
                      }
-
              }
-
-
          return Percentage(peoplePercent,
              planetPercent, filmsPercent, speciesPercent, vehiclesPercent, starshipsPercent)
         }
 
-     fun getPeopleApis(page: Int) {
 
+    fun getPeopleApis(page: Int) {
          iPresenter?.isApiLoading(true)
-
-
-             jobPeople = CoroutineScope(Dispatchers.IO).launch {
-
-
-                     supervisorScope {
+         jobPeople = CoroutineScope(Dispatchers.IO).launch {
+                 supervisorScope {
                          val peopleService = ApiCall.create()
                          getPeopleTask = async(handler) {
                              peopleService.getPeople(page)
                          }
                          try {
                              peopleTask = getPeopleTask.await()
-
                              withContext(Dispatchers.Main + jobPeople as Job) {
                                  try {
                                      if (peopleTask?.isSuccessful as Boolean) {
@@ -220,26 +166,9 @@ class MainPresenter: CoroutineScope{
                                              peopleArticles?.add(i)
                                          }
 
-                                         peoplePercent = 100
-                                         percent = Percentage(
-                                             peoplePercent,
-                                             planetPercent,
-                                             filmsPercent,
-                                             speciesPercent,
-                                             vehiclesPercent,
-                                             starshipsPercent
-                                         )
-                                         percent.let { iPresenter?.onApiPercentage(it) }
+                                         updatePeoplePercent()
 
-                                         jobPeople?.cancel()
-                                         jobPeople = null
-                                         peopleTask = null
-                                         iPresenter?.onSuccess(
-                                             peopleArticles as ArrayList<Results1>,
-                                             "People"
-                                         )
-                                         iPresenter?.isApiLoading(false)
-
+                                         cancelandUpdatePeoplesList()
 
                                      } else {
                                          iPresenter?.isApiLoading(false)
@@ -248,7 +177,6 @@ class MainPresenter: CoroutineScope{
                                  } catch (e: Exception) {
                                      e.printStackTrace()
                                  }
-
                              }
                          } catch (e: IOException) {
                              e.printStackTrace()
@@ -256,89 +184,44 @@ class MainPresenter: CoroutineScope{
                          }
 
                      }
-
              }
-
      }
 
 
 
-     fun getFilmsApis(page: Int) {
+
+    fun getFilmsApis(page: Int) {
 
             jobFilms = CoroutineScope(Dispatchers.IO).launch {
-
-
-
-                    supervisorScope {
+                supervisorScope {
                         val filmsService = ApiCall.create()
                         getFilmsTask = async(handler) {
                             filmsService.getFilms(page)
                         }
                         try {
-
                             filmsTask = getFilmsTask?.await()
-
                             withContext(Dispatchers.Main + jobFilms as Job) {
                                 try {
                                     if (filmsTask?.isSuccessful as Boolean) {
 
-                                        if (filmsTask?.body()?.count as Int % 10 != 0 && films_firstStart == null) {
-                                            FILMS_END_PAGE =
-                                                (filmsTask?.body()?.count as Int / 10) + 1
-                                            films_firstStart = true
-                                        } else if (filmsTask?.body()?.count as Int % 10 == 0 && films_firstStart == null) {
-                                            FILMS_END_PAGE = (filmsTask?.body()?.count as Int / 10)
-                                            films_firstStart = true
-                                        }
+                                        calculateFilmsFirstPageLastPage()
 
                                         for (i in filmsTask?.body()?.results as ArrayList<Results1>) {
                                             filmArticles?.add(i)
                                         }
 
-                                        filmsPercent = (page / FILMS_END_PAGE) * 100
+                                        updateFilmsPercent(page)
 
-                                        percent = Percentage(
-                                            peoplePercent,
-                                            planetPercent,
-                                            filmsPercent,
-                                            speciesPercent,
-                                            vehiclesPercent,
-                                            starshipsPercent
-                                        )
-                                        percent.let { iPresenter?.onApiPercentage(it) }
+                                        setFlagIfFilmsPageTraversed()
 
-                                        if (filmsTask?.body()?.count as Int % 10 != 0) {
-                                            if (FILMS_START_PAGE == FILMS_END_PAGE) {
-                                                films_firstStart = false
-                                            }
-                                        } else {
-                                            if (FILMS_START_PAGE == FILMS_END_PAGE) {
-                                                films_firstStart = false
-                                            }
-                                        }
                                         FILMS_START_PAGE++
-                                        if (FILMS_START_PAGE <= FILMS_END_PAGE) {
-                                            if (jobFilms?.isActive as Boolean) {
-                                                jobFilms?.cancel()
-                                                jobFilms = null
-                                                filmsTask = null
-                                                try {
-                                                    getFilmsApis(FILMS_START_PAGE)
-                                                } catch (e: Exception) {
-                                                    e.printStackTrace()
-                                                }
 
-
-                                            }
+                                        if (filmsPagesTraversing()) {
+                                            cancelFilmsCoroutinesJobandRecallApi()
                                         }
-                                        if (films_firstStart == false) {
-                                            films_firstStart = null
-                                            jobFilms?.cancel()
-                                            jobFilms = null
-                                            filmsTask = null
-                                            FILMS_START_PAGE = 1
-                                            filmArticles?.let { iPresenter?.onSuccess(it, "Films") }
 
+                                        if (filmsPageTraversed()) {
+                                            cancelFilmsCoroutinesJobandApiCall()
                                         }
                                     } else if (!filmsTask?.isSuccessful!!) {
                                         iPresenter?.onFailure()
@@ -346,103 +229,51 @@ class MainPresenter: CoroutineScope{
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
-
                             }
-
-
                         } catch (e: IOException) {
                             e.printStackTrace()
                             iPresenter?.onFailure()
                         }
-
                     }
-
-
             }
+     }
 
 
 
-    }
-
-     fun getSpeciesApis(page: Int) {
-
-
-            jobSpecies = CoroutineScope(Dispatchers.IO).launch {
-
-
-                    supervisorScope {
+    fun getSpeciesApis(page: Int) {
+         jobSpecies = CoroutineScope(Dispatchers.IO).launch {
+                supervisorScope {
                         val speciesServices = ApiCall.create()
                         getSpeciesTask = async(handler) {
                             speciesServices.getSpecies(page)
                         }
                         try {
                             speciesTask = getSpeciesTask?.await()
-
-
                             withContext(Dispatchers.Main + jobSpecies as Job) {
                                 try {
                                     if (speciesTask?.isSuccessful as Boolean) {
 
-                                        if (speciesTask?.body()?.count as Int % 10 != 0 && species_firstStart == null) {
-                                            SPECIES_END_PAGE =
-                                                (speciesTask?.body()?.count as Int / 10) + 1
-                                            species_firstStart = true
-                                        } else if (speciesTask?.body()?.count as Int % 10 == 0 && species_firstStart == null) {
-                                            SPECIES_END_PAGE =
-                                                (speciesTask?.body()?.count as Int / 10)
-                                            species_firstStart = true
-                                        }
+                                        calculateSpeciesFirstandLastPage()
+
 
                                         for (i in speciesTask?.body()?.results as ArrayList<Results1>) {
                                             speciesArticles?.add(i)
                                         }
 
-                                        speciesPercent = (page / SPECIES_END_PAGE) * 100
+                                        updateSpeciesPercentage(page)
 
-                                        percent = Percentage(
-                                            peoplePercent,
-                                            planetPercent,
-                                            filmsPercent,
-                                            speciesPercent,
-                                            vehiclesPercent,
-                                            starshipsPercent
-                                        )
-                                        percent.let { iPresenter?.onApiPercentage(it) }
+                                        setFlagIfSpeciesPagesTraversed()
 
-                                        if (speciesTask?.body()?.count as Int % 10 != 0) {
-                                            if (SPECIES_START_PAGE == SPECIES_END_PAGE) {
-                                                species_firstStart = false
-                                            }
-                                        } else {
-                                            if (SPECIES_START_PAGE == SPECIES_END_PAGE) {
-                                                species_firstStart = false
-                                            }
-                                        }
                                         SPECIES_START_PAGE++
-                                        if (SPECIES_START_PAGE <= SPECIES_END_PAGE) {
-                                            if (jobSpecies?.isActive as Boolean) {
-                                                jobSpecies?.cancel()
-                                                jobSpecies = null
-                                                speciesTask = null
-                                                try {
-                                                    getSpeciesApis(SPECIES_START_PAGE)
-                                                } catch (e: Exception) {
-                                                    e.printStackTrace()
-                                                }
-                                            }
+
+                                        if (speciesTraversing()) {
+
+                                            cancelSpeciesCoroutineJobandRecallApi()
+
                                         }
-                                        if (species_firstStart == false) {
-                                            species_firstStart = null
-                                            jobSpecies?.cancel()
-                                            jobSpecies = null
-                                            speciesTask = null
-                                            SPECIES_START_PAGE = 1
-                                            speciesArticles?.let {
-                                                iPresenter?.onSuccess(
-                                                    it,
-                                                    "Species"
-                                                )
-                                            }
+                                        if (speciesPagesTraversed()) {
+
+                                            cancelSpeciesCoroutineJobandApiCall()
 
                                         }
                                     } else if (!speciesTask?.isSuccessful!!) {
@@ -451,27 +282,22 @@ class MainPresenter: CoroutineScope{
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
-
                             }
                         } catch (e: IOException) {
                             e.printStackTrace()
                             iPresenter?.onFailure()
                         }
                     }
-
-
             }
+     }
 
 
-    }
 
-     fun getVehiclesApis(page: Int) {
+    fun getVehiclesApis(page: Int) {
 
+         jobVehicles = CoroutineScope(Dispatchers.IO).launch {
 
-            jobVehicles = CoroutineScope(Dispatchers.IO).launch {
-
-
-                    supervisorScope {
+                supervisorScope {
 
                         val vehiclesService = ApiCall.create()
                         getVehiclesTask = async(handler) {
@@ -483,70 +309,26 @@ class MainPresenter: CoroutineScope{
                                 try {
                                     if (vehiclesTask?.isSuccessful as Boolean) {
 
-                                        if (vehiclesTask?.body()?.count as Int % 10 != 0 && people_firstStart == null) {
-                                            VEHICLES_END_PAGE =
-                                                (vehiclesTask?.body()?.count as Int / 10) + 1
-                                            vehicles_firstStart = true
-                                        } else if (vehiclesTask?.body()?.count as Int % 10 == 0 && vehicles_firstStart == null) {
-                                            VEHICLES_END_PAGE =
-                                                (vehiclesTask?.body()?.count as Int / 10)
-                                            vehicles_firstStart = true
-                                        }
+                                        calculateVehiclesFirstandLastPage()
 
                                         for (i in vehiclesTask?.body()?.results as ArrayList<Results1>) {
                                             vehiclesArticles?.add(i)
                                         }
 
+                                        updateVehiclesPercent(page)
 
-                                        vehiclesPercent = (page / VEHICLES_END_PAGE) * 100
+                                        setFlagIfVehiclesTraversed()
 
-                                        percent = Percentage(
-                                            peoplePercent,
-                                            planetPercent,
-                                            filmsPercent,
-                                            speciesPercent,
-                                            vehiclesPercent,
-                                            starshipsPercent
-                                        )
-                                        percent.let { iPresenter?.onApiPercentage(it) }
-
-                                        if (vehiclesTask?.body()?.count as Int % 10 != 0) {
-                                            if (VEHICLES_START_PAGE == VEHICLES_END_PAGE) {
-                                                vehicles_firstStart = false
-                                            }
-                                        } else {
-                                            if (VEHICLES_START_PAGE == VEHICLES_END_PAGE) {
-                                                vehicles_firstStart = false
-                                            }
-                                        }
                                         VEHICLES_START_PAGE++
-                                        if (VEHICLES_START_PAGE <= VEHICLES_END_PAGE) {
-                                            if (jobVehicles?.isActive as Boolean) {
-                                                jobVehicles?.cancel()
-                                                jobVehicles = null
-                                                vehiclesTask = null
-                                                try {
-                                                    getVehiclesApis(VEHICLES_START_PAGE)
-                                                } catch (e: Exception) {
-                                                    e.printStackTrace()
-                                                }
 
+                                        if (vehiclesPagesTraversering()) {
 
-                                            }
+                                            cancelVehiclesCoroutinesJobandRecallAPi()
+
                                         }
+                                        if (vehiclesPagesTraversed()) {
 
-                                        if (vehicles_firstStart == false) {
-                                            vehicles_firstStart = null
-                                            jobVehicles?.cancel()
-                                            jobVehicles = null
-                                            vehiclesTask = null
-                                            VEHICLES_START_PAGE = 1
-                                            vehiclesArticles?.let {
-                                                iPresenter?.onSuccess(
-                                                    it,
-                                                    "Vehicles"
-                                                )
-                                            }
+                                            cancelVehiclesCoroutinesJobandApiCall()
 
                                         }
                                     } else if (!vehiclesTask?.isSuccessful!!) {
@@ -555,32 +337,22 @@ class MainPresenter: CoroutineScope{
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
-
                             }
                         } catch (e: IOException) {
                             e.printStackTrace()
                             iPresenter?.onFailure()
                         }
-
-
                     }
-
-
             }
+     }
 
 
 
+    fun getStarshipsApis(page: Int) {
 
-    }
+         jobStarships = CoroutineScope(Dispatchers.IO).launch {
 
-     fun getStarshipsApis(page: Int) {
-
-
-             jobStarships = CoroutineScope(Dispatchers.IO).launch {
-
-
-
-        supervisorScope {
+                 supervisorScope {
             val starshipsService = ApiCall.create()
             getStarshipsTask = async(handler) {
                 starshipsService.getStarships(page)
@@ -592,62 +364,24 @@ class MainPresenter: CoroutineScope{
                     try {
                         if (starshipsTask?.isSuccessful as Boolean) {
 
-                            if (starshipsTask?.body()?.count as Int % 10 != 0 && starships_firstStart == null) {
-                                STARSHIPS_END_PAGE = (starshipsTask?.body()?.count as Int / 10) + 1
-                                starships_firstStart = true
-                            } else if (starshipsTask?.body()?.count as Int % 10 == 0 && starships_firstStart == null) {
-                                STARSHIPS_END_PAGE = (starshipsTask?.body()?.count as Int / 10)
-                                starships_firstStart = true
-                            }
+                            calculateStarshipsFirsandLastPage()
 
                             for (i in starshipsTask?.body()?.results as ArrayList<Results1>) {
                                 starshipsArticles?.add(i)
                             }
 
-                            starshipsPercent = (page / STARSHIPS_END_PAGE) * 100
+                            updateStarshipsPercentage(page)
 
-                            percent = Percentage(
-                                peoplePercent,
-                                planetPercent,
-                                filmsPercent,
-                                speciesPercent,
-                                vehiclesPercent,
-                                starshipsPercent
-                            )
-                            percent.let { iPresenter?.onApiPercentage(it) }
+                            setFlagIfStarshipsPagesTraversed()
 
-                            if (starshipsTask?.body()?.count as Int % 10 != 0) {
-                                if (STARSHIPS_START_PAGE == STARSHIPS_END_PAGE) {
-                                    starships_firstStart = false
-                                }
-                            } else {
-                                if (STARSHIPS_START_PAGE == STARSHIPS_END_PAGE) {
-                                    starships_firstStart = false
-                                }
-                            }
                             STARSHIPS_START_PAGE++
-                            if (STARSHIPS_START_PAGE <= STARSHIPS_END_PAGE) {
-                                if (jobStarships?.isActive as Boolean) {
-                                    jobStarships?.cancel()
-                                    jobStarships = null
-                                    starshipsTask = null
-                                    try {
-                                        getStarshipsApis(STARSHIPS_START_PAGE)
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
 
-                                }
+                            if (starshipsTraversing()) {
+                                cancelStarshipsCoroutinesJobandRecallApi()
+
                             }
-
-                            if (starships_firstStart == false) {
-                                starships_firstStart = null
-                                jobStarships?.cancel()
-                                jobStarships = null
-                                starshipsTask = null
-                                STARSHIPS_START_PAGE = 1
-                                starshipsArticles?.let { iPresenter?.onSuccess(it, "Starships") }
-
+                            if (starshipsTraversed()) {
+                                cancelStarshipsCoroutinesJobandApiCall()
                             }
                         } else if (!starshipsTask?.isSuccessful!!) {
                             iPresenter?.onFailure()
@@ -655,22 +389,15 @@ class MainPresenter: CoroutineScope{
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
                 iPresenter?.onFailure()
             }
-
         }
+       }
+     }
 
-
-             }
-
-
-
-
-    }
 
     // post api call to send Fav data to webhook
     fun postFavApi(favData: FavData1){
@@ -692,15 +419,385 @@ class MainPresenter: CoroutineScope{
             }
         })
     }
-    private var jobPlanets: Job? = Job()
-    private var jobPeople: Job? = Job()
-    private var jobSpecies: Job? = Job()
-    private var jobFilms: Job? = Job()
-    private var jobVehicles: Job? = Job()
-    private var jobStarships: Job? = Job()
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
 
 
+    private fun cancelStarshipsCoroutinesJobandApiCall() {
+        starships_firstStart = null
+        jobStarships?.cancel()
+        jobStarships = null
+        starshipsTask = null
+        STARSHIPS_START_PAGE = 1
+        starshipsArticles?.let { iPresenter?.onSuccess(it, "Starships") }
+    }
 
+    private fun starshipsTraversed(): Boolean {
+        return starships_firstStart == false
+    }
+
+    private fun cancelStarshipsCoroutinesJobandRecallApi() {
+        if (jobStarships?.isActive as Boolean) {
+            jobStarships?.cancel()
+            jobStarships = null
+            starshipsTask = null
+            try {
+                getStarshipsApis(STARSHIPS_START_PAGE)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun starshipsTraversing(): Boolean {
+        return STARSHIPS_START_PAGE <= STARSHIPS_END_PAGE
+    }
+
+    private fun setFlagIfStarshipsPagesTraversed() {
+        if (starshipsTask?.body()?.count as Int % 10 != 0) {
+            if (STARSHIPS_START_PAGE == STARSHIPS_END_PAGE) {
+                starships_firstStart = false
+            }
+        } else {
+            if (STARSHIPS_START_PAGE == STARSHIPS_END_PAGE) {
+                starships_firstStart = false
+            }
+        }
+    }
+
+    private fun updateStarshipsPercentage(page: Int) {
+        starshipsPercent = (page / STARSHIPS_END_PAGE) * 100
+
+        percent = Percentage(
+            peoplePercent,
+            planetPercent,
+            filmsPercent,
+            speciesPercent,
+            vehiclesPercent,
+            starshipsPercent
+        )
+        percent.let { iPresenter?.onApiPercentage(it) }
+    }
+
+    private fun calculateStarshipsFirsandLastPage() {
+        if (starshipsTask?.body()?.count as Int % 10 != 0 && starships_firstStart == null) {
+            STARSHIPS_END_PAGE = (starshipsTask?.body()?.count as Int / 10) + 1
+            starships_firstStart = true
+        } else if (starshipsTask?.body()?.count as Int % 10 == 0 && starships_firstStart == null) {
+            STARSHIPS_END_PAGE = (starshipsTask?.body()?.count as Int / 10)
+            starships_firstStart = true
+        }
+    }
+
+    private fun cancelVehiclesCoroutinesJobandApiCall() {
+        vehicles_firstStart = null
+        jobVehicles?.cancel()
+        jobVehicles = null
+        vehiclesTask = null
+        VEHICLES_START_PAGE = 1
+        vehiclesArticles?.let {
+            iPresenter?.onSuccess(
+                it,
+                "Vehicles"
+            )
+        }
+    }
+
+    private fun vehiclesPagesTraversed(): Boolean {
+        return vehicles_firstStart == false
+    }
+
+    private fun cancelVehiclesCoroutinesJobandRecallAPi() {
+        if (jobVehicles?.isActive as Boolean) {
+            jobVehicles?.cancel()
+            jobVehicles = null
+            vehiclesTask = null
+            try {
+                getVehiclesApis(VEHICLES_START_PAGE)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun vehiclesPagesTraversering(): Boolean {
+        return VEHICLES_START_PAGE <= VEHICLES_END_PAGE
+    }
+
+    private fun setFlagIfVehiclesTraversed() {
+        if (vehiclesTask?.body()?.count as Int % 10 != 0) {
+            if (VEHICLES_START_PAGE == VEHICLES_END_PAGE) {
+                vehicles_firstStart = false
+            }
+        } else {
+            if (VEHICLES_START_PAGE == VEHICLES_END_PAGE) {
+                vehicles_firstStart = false
+            }
+        }
+    }
+
+    private fun updateVehiclesPercent(page: Int) {
+        vehiclesPercent = (page / VEHICLES_END_PAGE) * 100
+
+        percent = Percentage(
+            peoplePercent,
+            planetPercent,
+            filmsPercent,
+            speciesPercent,
+            vehiclesPercent,
+            starshipsPercent
+        )
+        percent.let { iPresenter?.onApiPercentage(it) }
+    }
+
+    private fun calculateVehiclesFirstandLastPage() {
+        if (vehiclesTask?.body()?.count as Int % 10 != 0 && people_firstStart == null) {
+            VEHICLES_END_PAGE =
+                (vehiclesTask?.body()?.count as Int / 10) + 1
+            vehicles_firstStart = true
+        } else if (vehiclesTask?.body()?.count as Int % 10 == 0 && vehicles_firstStart == null) {
+            VEHICLES_END_PAGE =
+                (vehiclesTask?.body()?.count as Int / 10)
+            vehicles_firstStart = true
+        }
+    }
+
+    private fun cancelSpeciesCoroutineJobandApiCall() {
+        species_firstStart = null
+        jobSpecies?.cancel()
+        jobSpecies = null
+        speciesTask = null
+        SPECIES_START_PAGE = 1
+        speciesArticles?.let {
+            iPresenter?.onSuccess(
+                it,
+                "Species"
+            )
+        }
+    }
+
+    private fun speciesPagesTraversed(): Boolean {
+        return species_firstStart == false
+    }
+
+    private fun cancelSpeciesCoroutineJobandRecallApi() {
+        if (jobSpecies?.isActive as Boolean) {
+            jobSpecies?.cancel()
+            jobSpecies = null
+            speciesTask = null
+            try {
+                getSpeciesApis(SPECIES_START_PAGE)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun speciesTraversing(): Boolean {
+        return SPECIES_START_PAGE <= SPECIES_END_PAGE
+    }
+
+    private fun setFlagIfSpeciesPagesTraversed() {
+        if (speciesTask?.body()?.count as Int % 10 != 0) {
+            if (SPECIES_START_PAGE == SPECIES_END_PAGE) {
+                species_firstStart = false
+            }
+        } else {
+            if (SPECIES_START_PAGE == SPECIES_END_PAGE) {
+                species_firstStart = false
+            }
+        }
+    }
+
+    private fun updateSpeciesPercentage(page: Int) {
+        speciesPercent = (page / SPECIES_END_PAGE) * 100
+
+        percent = Percentage(
+            peoplePercent,
+            planetPercent,
+            filmsPercent,
+            speciesPercent,
+            vehiclesPercent,
+            starshipsPercent
+        )
+        percent.let { iPresenter?.onApiPercentage(it) }
+    }
+
+    private fun calculateSpeciesFirstandLastPage() {
+        if (speciesTask?.body()?.count as Int % 10 != 0 && species_firstStart == null) {
+            SPECIES_END_PAGE =
+                (speciesTask?.body()?.count as Int / 10) + 1
+            species_firstStart = true
+        } else if (speciesTask?.body()?.count as Int % 10 == 0 && species_firstStart == null) {
+            SPECIES_END_PAGE =
+                (speciesTask?.body()?.count as Int / 10)
+            species_firstStart = true
+        }
+    }
+
+    private fun cancelFilmsCoroutinesJobandApiCall() {
+        films_firstStart = null
+        jobFilms?.cancel()
+        jobFilms = null
+        filmsTask = null
+        FILMS_START_PAGE = 1
+        filmArticles?.let { iPresenter?.onSuccess(it, "Films") }
+    }
+
+    private fun filmsPageTraversed(): Boolean {
+        return films_firstStart == false
+    }
+
+    private fun cancelFilmsCoroutinesJobandRecallApi() {
+        if (jobFilms?.isActive as Boolean) {
+            jobFilms?.cancel()
+            jobFilms = null
+            filmsTask = null
+            try {
+                getFilmsApis(FILMS_START_PAGE)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun filmsPagesTraversing(): Boolean {
+        return FILMS_START_PAGE <= FILMS_END_PAGE
+    }
+
+    private fun setFlagIfFilmsPageTraversed() {
+        if (filmsTask?.body()?.count as Int % 10 != 0) {
+            if (FILMS_START_PAGE == FILMS_END_PAGE) {
+                films_firstStart = false
+            }
+        } else {
+            if (FILMS_START_PAGE == FILMS_END_PAGE) {
+                films_firstStart = false
+            }
+        }
+    }
+
+    private fun updateFilmsPercent(page: Int) {
+        filmsPercent = (page / FILMS_END_PAGE) * 100
+
+        percent = Percentage(
+            peoplePercent,
+            planetPercent,
+            filmsPercent,
+            speciesPercent,
+            vehiclesPercent,
+            starshipsPercent
+        )
+        percent.let { iPresenter?.onApiPercentage(it) }
+    }
+
+    private fun calculateFilmsFirstPageLastPage() {
+        if (filmsTask?.body()?.count as Int % 10 != 0 && films_firstStart == null) {
+            FILMS_END_PAGE =
+                (filmsTask?.body()?.count as Int / 10) + 1
+            films_firstStart = true
+        } else if (filmsTask?.body()?.count as Int % 10 == 0 && films_firstStart == null) {
+            FILMS_END_PAGE = (filmsTask?.body()?.count as Int / 10)
+            films_firstStart = true
+        }
+    }
+
+    private fun cancelandUpdatePeoplesList() {
+        jobPeople?.cancel()
+        jobPeople = null
+        peopleTask = null
+        iPresenter?.onSuccess(
+            peopleArticles as ArrayList<Results1>,
+            "People"
+        )
+        iPresenter?.isApiLoading(false)
+    }
+
+    private fun updatePeoplePercent() {
+        peoplePercent = 100
+        percent = Percentage(
+            peoplePercent,
+            planetPercent,
+            filmsPercent,
+            speciesPercent,
+            vehiclesPercent,
+            starshipsPercent
+        )
+        percent.let { iPresenter?.onApiPercentage(it) }
+    }
+
+
+    private fun cancelPlanetCoroutineJobandApiCall() {
+        jobPlanets?.cancel()
+        jobPlanets = null
+        planetsTask = null
+        planet_firstStart = null
+        PLANET_START_PAGE = 1
+        planetArticles?.let {
+            iPresenter?.onSuccess(
+                it,
+                "Planets"
+            )
+        }
+    }
+
+    private fun planetsPageTraversed(): Boolean {
+        return planet_firstStart == false
+    }
+
+    private fun cancelPlanetCoroutineJobandRecallApi() {
+        if (jobPlanets?.isActive as Boolean) {
+            jobPlanets?.cancel()
+            jobPlanets = null
+            planetsTask = null
+            try {
+                getPlanetsApis(PLANET_START_PAGE)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun planestsPageTraversing(): Boolean {
+        return  PLANET_START_PAGE <= PLANET_END_PAGE
+    }
+
+    private fun setFlagIfPlanetPagesTraversed() {
+        if (planetsTask?.body()?.count as Int % 10 != 0) {
+            if (PLANET_START_PAGE == PLANET_END_PAGE) {
+                planet_firstStart = false
+            }
+        } else {
+            if (PLANET_START_PAGE == PLANET_END_PAGE) {
+                planet_firstStart = false
+            }
+        }
+    }
+
+    private fun updatePlanetPercentage(page: Int) {
+        planetPercent = (page / PLANET_END_PAGE) * 100
+
+        // create object and send it to the requiring classes
+        percent = Percentage(
+            peoplePercent,
+            planetPercent,
+            filmsPercent,
+            speciesPercent,
+            vehiclesPercent,
+            starshipsPercent
+        )
+        percent.let { iPresenter?.onApiPercentage(it) }
+    }
+
+    private fun calculatePlanetsFirstPageLastPage() {
+        if (planetsTask?.body()?.count as Int % 10 != 0 && planet_firstStart == null) {
+            // increase End Page by 1 if remainder of items is found
+            PLANET_END_PAGE =
+                (planetsTask?.body()?.count as Int / 10) + 1
+            planet_firstStart = true
+            planetArticles = ArrayList()
+        } else if (planetsTask?.body()?.count as Int % 10 == 0 && planet_firstStart == null) {
+            PLANET_END_PAGE =
+                (planetsTask?.body()?.count as Int / 10)
+            planet_firstStart = true
+        }
+    }
 }

@@ -51,7 +51,7 @@ class SplashScreen : AppCompatActivity() , IPresenter {
         ApplicationConstant.starshipsHashMap = HashMap()
 
     }
-    override fun onSuccessCode(code: Int?) {}
+
 
     override fun onSuccess(articles: ArrayList<Results1>, request: String?) {
         // receiving responses and checking if all are received
@@ -95,15 +95,14 @@ class SplashScreen : AppCompatActivity() , IPresenter {
         // load determinate progress bars with percentage data received from simultaneous api calls
         bindingSplash?.percent = percent
     }
-
-    override fun isApiLoading(isLoading: Boolean?) {}
-
     override fun onFailure() {
         runOnUiThread {
             Toast.makeText(this, "Error Retrieving Data from Server !", Toast.LENGTH_SHORT).show()
         }
-
     }
+    override fun isApiLoading(isLoading: Boolean?) {}
+    override fun onSuccessCode(code: Int?) {}
+
 
     override fun onResume() {
         super.onResume()

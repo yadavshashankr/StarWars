@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity(), IPresenter{
         activityMainBinding?.lifecycleOwner = this
 
         initPresenter()
-
     }
 
     private fun initPresenter() {
@@ -98,8 +97,22 @@ class MainActivity : AppCompatActivity(), IPresenter{
             layoutManager = mlayoutManager
             adapter = mAdapter
         }
-
     }
+
+    override fun onSuccess(articles: ArrayList<Results1>, request: String?) {
+        peopleArticles1 = articles
+        setAdapterData(peopleArticles1)
+    }
+    override fun isApiLoading(isLoading: Boolean?) {
+        if (isLoading as Boolean){
+            activityMainBinding?.mainPb?.visibility = View.VISIBLE
+        }else{
+            activityMainBinding?.mainPb?.visibility = View.GONE
+        }
+    }
+    override fun onFailure() {}
+    override fun onApiPercentage(percent: Percentage?) {}
+    override fun onSuccessCode(code: Int?) {}
 
     private fun activateListeners() {
 
@@ -174,7 +187,6 @@ class MainActivity : AppCompatActivity(), IPresenter{
                     val centerOfScreen: Int = activityMainBinding?.list?.width as Int / 2 - view.width / 2
                     mlayoutManager.scrollToPositionWithOffset(itemToScroll, centerOfScreen)
                 }
-
             }
         }}.also {
             // set the data to the adapters as soon as all listeners are initialized
@@ -190,7 +202,6 @@ class MainActivity : AppCompatActivity(), IPresenter{
             activatedOnce = false
         }
         return activatedOnce as Boolean
-
     }
 
     fun setAdapterData(data: ArrayList<Results1>?){
@@ -207,21 +218,4 @@ class MainActivity : AppCompatActivity(), IPresenter{
         super.onBackPressed()
         finish()
     }
-    override fun isApiLoading(isLoading: Boolean?) {
-        if (isLoading as Boolean){
-            activityMainBinding?.mainPb?.visibility = View.VISIBLE
-        }else{
-            activityMainBinding?.mainPb?.visibility = View.GONE
-        }
-    }
-    override fun onSuccess(articles: ArrayList<Results1>, request: String?) {
-        peopleArticles1 = articles
-        setAdapterData(peopleArticles1)
-    }
-
-    override fun onFailure() {}
-    override fun onApiPercentage(percent: Percentage?) {}
-    override fun onSuccessCode(code: Int?) {}
-
-
 }
