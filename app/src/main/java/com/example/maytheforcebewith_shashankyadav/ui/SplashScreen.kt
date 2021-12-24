@@ -18,7 +18,7 @@ import com.example.maytheforcebewith_shashankyadav.utils.NetworkCheck.Companion.
 
 /* SplashScreen acts as a splash activity and also displays data received by simultaneous api calls
 using coroutines*/
-class SplashScreen : AppCompatActivity() , IPresenter {
+class SplashScreen : AppCompatActivity(), IPresenter {
 
     private var planets: Boolean = false
     private var films: Boolean = false
@@ -26,14 +26,17 @@ class SplashScreen : AppCompatActivity() , IPresenter {
     private var vehicles: Boolean = false
     private var starships: Boolean = false
     private var people: Boolean = false
-    private var peopleArticles1: ArrayList<Results1>? =  ArrayList()
+    private var peopleArticles1: ArrayList<Results1>? = ArrayList()
     private lateinit var mMainPresenter: MainPresenter
     var bindingSplash: ActivitySplashScreenBinding? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // creating data binding object
-        bindingSplash = DataBindingUtil.setContentView<ActivitySplashScreenBinding>(this, R.layout.activity_splash_screen)
+        bindingSplash = DataBindingUtil.setContentView<ActivitySplashScreenBinding>(
+            this,
+            R.layout.activity_splash_screen
+        )
         mMainPresenter = MainPresenter(this)
 
         bindingSplash?.lifecycleOwner = this
@@ -80,9 +83,9 @@ class SplashScreen : AppCompatActivity() , IPresenter {
     }
 
     private fun dataLoadComplete() {
-        if (people && planets && films && species && vehicles && starships){
+        if (people && planets && films && species && vehicles && starships) {
             // if all responses are received then moving to Main Activity
-            runOnUiThread{
+            runOnUiThread {
                 startActivity(
                     Intent(this, MainActivity::class.java)
                 )
@@ -95,11 +98,13 @@ class SplashScreen : AppCompatActivity() , IPresenter {
         // load determinate progress bars with percentage data received from simultaneous api calls
         bindingSplash?.percent = percent
     }
+
     override fun onFailure() {
         runOnUiThread {
             Toast.makeText(this, "Error Retrieving Data from Server !", Toast.LENGTH_SHORT).show()
         }
     }
+
     override fun isApiLoading(isLoading: Boolean?) {}
     override fun onSuccessCode(code: Int?) {}
 
@@ -107,14 +112,14 @@ class SplashScreen : AppCompatActivity() , IPresenter {
     override fun onResume() {
         super.onResume()
         // calling all the api's simultaneously
-        if (verifyAvailableNetwork(this)){
+        if (verifyAvailableNetwork(this)) {
             mMainPresenter.getPlanetsApis(1)
             mMainPresenter.getPeopleApis(1)
             mMainPresenter.getFilmsApis(1)
             mMainPresenter.getSpeciesApis(1)
             mMainPresenter.getVehiclesApis(1)
             mMainPresenter.getStarshipsApis(1)
-        }else{
+        } else {
             Toast.makeText(this, "Please connect to Internet", Toast.LENGTH_SHORT).show()
         }
     }

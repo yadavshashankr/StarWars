@@ -22,7 +22,7 @@ class CharacterDetail : AppCompatActivity() {
         //Receive data object of selected item from  MainActivity's list
         val characterDetail = intent.extras?.get("character") as Results1
         // create binding object
-        val binding =  DataBindingUtil.setContentView<ItemBinding>(this, R.layout.item)
+        val binding = DataBindingUtil.setContentView<ItemBinding>(this, R.layout.item)
 
 
         binding.lifecycleOwner = this
@@ -39,25 +39,26 @@ class CharacterDetail : AppCompatActivity() {
         binding.tvBirth.setTextColor(resources.getColor(R.color.black))
 
         // process arraylist of films, species, vehicles and starships to retrieve data for the selected character
-        if (characterDetail.films?.size != 0){
+        if (characterDetail.films?.size != 0) {
             val filmsValue = processFilmsValues(characterDetail.films)
             binding.result?.filmsValues = filmsValue
         }
-        if (characterDetail.species?.size != 0){
+        if (characterDetail.species?.size != 0) {
             val speciesValue = processSpeciesValues(characterDetail.species)
             binding.result?.speciesValue = speciesValue
         }
-        if (characterDetail.vehicles?.size != 0){
+        if (characterDetail.vehicles?.size != 0) {
             val vehiclesValue = processVehiclesValues(characterDetail.vehicles)
             binding.result?.vehiclesValue = vehiclesValue
         }
-        if (characterDetail.starships?.size != 0){
+        if (characterDetail.starships?.size != 0) {
             val starshipsValue = processStarshipsValues(characterDetail.starships)
             binding.result?.starshipsValue = starshipsValue
         }
 
-        val pos = characterDetail.homeworld?.replace(Regex("[\\D.]")
-                , "")?.toInt()
+        val pos = characterDetail.homeworld?.replace(
+            Regex("[\\D.]"), ""
+        )?.toInt()
         binding.result?.homeWorldValue = planetHashMap?.get(pos)
 
         binding.executePendingBindings()

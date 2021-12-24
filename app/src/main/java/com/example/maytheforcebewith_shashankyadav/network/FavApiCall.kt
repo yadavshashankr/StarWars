@@ -18,10 +18,11 @@ interface FavApiCall {
     fun store(@Body data: FavData1): Call<FavResponse1>
 
     companion object Client {
-    // creating api call for Favorites webhook
+        // creating api call for Favorites webhook
         var retroClient: FavApiCall? = null
-        @Synchronized  fun create(): FavApiCall {
-            if (retroClient == null){
+        @Synchronized
+        fun create(): FavApiCall {
+            if (retroClient == null) {
 
                 val retrofit = RetroInstance.getRetroInstance(ApplicationConstant.APP_URL_FAV)
                 retroClient = retrofit.create(FavApiCall::class.java)

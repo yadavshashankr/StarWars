@@ -5,15 +5,18 @@ import java.util.concurrent.TimeUnit
 
 class OkHttpClients {
 
-    companion object{
+    companion object {
         var okHttpClient: OkHttpClient? = null
 
 
-        @Synchronized fun getOkHttpClient1(): OkHttpClient{
+        @Synchronized
+        fun getOkHttpClient1(): OkHttpClient {
 
-            if (okHttpClient == null){
-                okHttpClient = OkHttpClient.Builder().connectTimeout(2, TimeUnit.MINUTES).writeTimeout(2, TimeUnit.MINUTES)
-                    .readTimeout(2, TimeUnit.MINUTES).addInterceptor(Interceptors.getLoggingInterceptor()).build()
+            if (okHttpClient == null) {
+                okHttpClient = OkHttpClient.Builder().connectTimeout(2, TimeUnit.MINUTES)
+                    .writeTimeout(2, TimeUnit.MINUTES)
+                    .readTimeout(2, TimeUnit.MINUTES)
+                    .addInterceptor(Interceptors.getLoggingInterceptor()).build()
             }
             return okHttpClient as OkHttpClient
         }

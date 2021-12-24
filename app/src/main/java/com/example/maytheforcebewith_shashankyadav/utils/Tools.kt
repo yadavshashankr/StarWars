@@ -13,9 +13,9 @@ class Tools {
 
     // Class to process views and Data
 
-    companion object{
+    companion object {
 
-        fun rotateDown(imageView: ImageView){
+        fun rotateDown(imageView: ImageView) {
             var mCurrRotation = 0f
             val fromRotation: Float = mCurrRotation
             var toRotation = 180f
@@ -28,7 +28,7 @@ class Tools {
             imageView.startAnimation(rotateAnim)
         }
 
-        fun rotateUp(imageView: ImageView){
+        fun rotateUp(imageView: ImageView) {
             var mCurrRotation = 180f
             val fromRotation: Float = mCurrRotation
             var toRotation = 360f
@@ -42,7 +42,7 @@ class Tools {
 
         }
 
-        fun setHeaderToBlack(context: Context?, applicationBinding: ItemBinding){
+        fun setHeaderToBlack(context: Context?, applicationBinding: ItemBinding) {
             context?.resources?.getColor(R.color.white)
                 ?.let { it1 -> applicationBinding.tvName.setTextColor(it1) }
             context?.resources?.getColor(R.color.white)
@@ -55,7 +55,7 @@ class Tools {
 
         }
 
-        fun setHeaderToWhite(context: Context?, applicationBinding: ItemBinding){
+        fun setHeaderToWhite(context: Context?, applicationBinding: ItemBinding) {
 
             context?.resources?.getColor(R.color.black)
                 ?.let { it1 -> applicationBinding.tvName.setTextColor(it1) }
@@ -80,8 +80,10 @@ class Tools {
             return applicationBinding.result?.fav as Boolean
         }
 
-        fun expanditemRow(applicationBinding: ItemBinding, position: Int, itemView: View, context: Context?,
-        recyclerItemClickListener: RecyclerItemClickListener?) {
+        fun expanditemRow(
+            applicationBinding: ItemBinding, position: Int, itemView: View, context: Context?,
+            recyclerItemClickListener: RecyclerItemClickListener?
+        ) {
             applicationBinding.rlExpand.visibility = View.VISIBLE
             applicationBinding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24_black)
             rotateDown(applicationBinding.ivArrow)
@@ -100,8 +102,10 @@ class Tools {
             return applicationBinding.rlExpand.visibility == View.VISIBLE
         }
 
-        fun resetFavouite(applicationBinding: ItemBinding, position: Int, itemView: View, context: Context?,
-                                  recyclerItemClickListener: RecyclerItemClickListener?) {
+        fun resetFavouite(
+            applicationBinding: ItemBinding, position: Int, itemView: View, context: Context?,
+            recyclerItemClickListener: RecyclerItemClickListener?
+        ) {
             applicationBinding.ivFav.tag = R.drawable.ic_baseline_favorite_border_24
             applicationBinding.ivFav.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_baseline_favorite_border_24))
             val favData = FavData1(applicationBinding.result?.name, false)
@@ -109,8 +113,10 @@ class Tools {
             applicationBinding.result?.fav = false
         }
 
-        fun setFavourite(applicationBinding: ItemBinding, position: Int, itemView: View, context: Context?,
-                                 recyclerItemClickListener: RecyclerItemClickListener?) {
+        fun setFavourite(
+            applicationBinding: ItemBinding, position: Int, itemView: View, context: Context?,
+            recyclerItemClickListener: RecyclerItemClickListener?
+        ) {
             applicationBinding.ivFav.tag = 1
             applicationBinding.ivFav.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_baseline_favorite_24))
             val favData = FavData1(applicationBinding.result?.name, true)
@@ -123,9 +129,8 @@ class Tools {
         }
 
 
-
-        fun isSpaceInString(string: String?): Boolean{
-            if (string?.contains(" ") == true){
+        fun isSpaceInString(string: String?): Boolean {
+            if (string?.contains(" ") == true) {
                 return false
             }
             return true

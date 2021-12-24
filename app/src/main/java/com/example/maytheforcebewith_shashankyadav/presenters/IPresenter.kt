@@ -4,13 +4,13 @@ import com.example.maytheforcebewith_shashankyadav.responses.Percentage
 import com.example.maytheforcebewith_shashankyadav.responses.Results1
 
 
-interface IPresenter{
+interface IPresenter {
 
     // gives api success code
     fun onSuccessCode(code: Int?)
 
     // gives list of people, plants, species, films, vehicles and starships
-    fun onSuccess(articles : ArrayList<Results1>, request: String?)
+    fun onSuccess(articles: ArrayList<Results1>, request: String?)
 
     // triggers when data is not received from server
     fun onFailure()

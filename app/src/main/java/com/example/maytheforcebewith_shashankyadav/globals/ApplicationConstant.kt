@@ -4,16 +4,16 @@ import com.example.maytheforcebewith_shashankyadav.responses.Results1
 
 
 class ApplicationConstant {
-    companion object{
-//        const val APP_URL: String = "https://swapi.dev/api/"
+    companion object {
+        //        const val APP_URL: String = "https://swapi.dev/api/"
         const val APP_URL: String = "https://swapi.py4e.com/api/"
         const val APP_URL_FAV: String = "https://webhook.site/"
         var peopleArticles: ArrayList<Results1>? = null
-        var planetArticles: ArrayList<Results1>? =  null
-        var filmArticles: ArrayList<Results1>? =  null
-        var speciesArticles: ArrayList<Results1>? =  null
-        var vehiclesArticles: ArrayList<Results1>? =  null
-        var starshipsArticles: ArrayList<Results1>? =  null
+        var planetArticles: ArrayList<Results1>? = null
+        var filmArticles: ArrayList<Results1>? = null
+        var speciesArticles: ArrayList<Results1>? = null
+        var vehiclesArticles: ArrayList<Results1>? = null
+        var starshipsArticles: ArrayList<Results1>? = null
         var planetHashMap: HashMap<Int, String>? = null
         var filmsHashMap: HashMap<Int, String>? = null
         var speciesHashMap: HashMap<Int, String>? = null

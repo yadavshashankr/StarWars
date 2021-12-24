@@ -35,22 +35,27 @@ import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setHead
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setUnFavouriteIcon
 
 
-class CustomAdapter : RecyclerView.Adapter<CustomAdapter.MyViewHolder>(){
+class CustomAdapter : RecyclerView.Adapter<CustomAdapter.MyViewHolder>() {
 
     var context: Context? = null
-    var articles : ArrayList<Results1> = ArrayList<Results1>()
+    var articles: ArrayList<Results1> = ArrayList<Results1>()
     private var recyclerItemClickListener: RecyclerItemClickListener? = null
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(article: ArrayList<Results1>, context: Context, callback: RecyclerItemClickListener){
+    fun setData(
+        article: ArrayList<Results1>,
+        context: Context,
+        callback: RecyclerItemClickListener
+    ) {
         this.context = context
         articles = article
         this.recyclerItemClickListener = callback
         notifyDataSetChanged()
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val recyclerListRowBinding :
+        val recyclerListRowBinding:
                 ItemBinding = ItemBinding.inflate(inflater, parent, false)
         return MyViewHolder(recyclerListRowBinding)
     }
@@ -59,21 +64,34 @@ class CustomAdapter : RecyclerView.Adapter<CustomAdapter.MyViewHolder>(){
         return articles.size
     }
 
-    inner class MyViewHolder(var applicationBinding: ItemBinding) : RecyclerView.ViewHolder(applicationBinding.root) {
+    inner class MyViewHolder(var applicationBinding: ItemBinding) :
+        RecyclerView.ViewHolder(applicationBinding.root) {
 
         fun bind() {
             // if size of list is 1 that means its a search and show the view in expanded form and changing colors of header
 
-            when(articles.size == 1){
-                true -> expanditemRow(applicationBinding, position, itemView, context, recyclerItemClickListener)
+            when (articles.size == 1) {
+                true -> expanditemRow(
+                    applicationBinding,
+                    position,
+                    itemView,
+                    context,
+                    recyclerItemClickListener
+                )
                 false -> cotractItemRow(applicationBinding, context)
             }
             // clicking on the arrow on item in list will expand the view changing colors of header
             applicationBinding.ivArrow.setOnClickListener {
 
-                when(rowItemExpanded(applicationBinding)){
+                when (rowItemExpanded(applicationBinding)) {
                     true -> cotractItemRow(applicationBinding, context)
-                    false ->expanditemRow(applicationBinding, position, itemView, context, recyclerItemClickListener)
+                    false -> expanditemRow(
+                        applicationBinding,
+                        position,
+                        itemView,
+                        context,
+                        recyclerItemClickListener
+                    )
                 }
 
             }
@@ -81,13 +99,25 @@ class CustomAdapter : RecyclerView.Adapter<CustomAdapter.MyViewHolder>(){
             data object of the list and also changing the icon's selected state
             */
             applicationBinding.ivFav.setOnClickListener {
-                when(apiFavourite(applicationBinding)){
-                    false -> setFavourite(applicationBinding, position, itemView, context, recyclerItemClickListener)
-                    true -> resetFavouite(applicationBinding, position, itemView, context, recyclerItemClickListener)
+                when (apiFavourite(applicationBinding)) {
+                    false -> setFavourite(
+                        applicationBinding,
+                        position,
+                        itemView,
+                        context,
+                        recyclerItemClickListener
+                    )
+                    true -> resetFavouite(
+                        applicationBinding,
+                        position,
+                        itemView,
+                        context,
+                        recyclerItemClickListener
+                    )
                 }
             }
             // if data received within list already has favourites then it will be processed here
-            when(favourite(applicationBinding)){
+            when (favourite(applicationBinding)) {
                 true -> setFavouriteIcon(applicationBinding)
                 false -> setUnFavouriteIcon(applicationBinding)
             }
@@ -109,31 +139,32 @@ class CustomAdapter : RecyclerView.Adapter<CustomAdapter.MyViewHolder>(){
 
 
         // retrieving data from respective hashmaps to display names on the character detail list item
-        val positionPlanet = holder.applicationBinding.result?.homeworld?.replace(Regex("[\\D.]")
-            , "")?.toInt()
+        val positionPlanet = holder.applicationBinding.result?.homeworld?.replace(
+            Regex("[\\D.]"), ""
+        )?.toInt()
         holder.applicationBinding.result?.homeWorldValue = planetHashMap?.get(positionPlanet)
-        if (holder.applicationBinding.result?.species?.size != 0){
+        if (holder.applicationBinding.result?.species?.size != 0) {
             val speciesValue = processSpeciesValues(holder.applicationBinding.result?.species)
             holder.applicationBinding.result?.speciesValue = speciesValue
-        }else{
+        } else {
             holder.applicationBinding.result?.speciesValue = "NA"
         }
-        if (holder.applicationBinding.result?.films?.size != 0){
+        if (holder.applicationBinding.result?.films?.size != 0) {
             val filmsValue = processFilmsValues(holder.applicationBinding.result?.films)
             holder.applicationBinding.result?.filmsValues = filmsValue
-        }else{
+        } else {
             holder.applicationBinding.result?.filmsValues = "NA"
         }
-        if (holder.applicationBinding.result?.vehicles?.size != 0){
+        if (holder.applicationBinding.result?.vehicles?.size != 0) {
             val vehiclesValue = processVehiclesValues(holder.applicationBinding.result?.vehicles)
             holder.applicationBinding.result?.vehiclesValue = vehiclesValue
-        }else{
+        } else {
             holder.applicationBinding.result?.vehiclesValue = "NA"
         }
-        if (holder.applicationBinding.result?.starships?.size != 0){
+        if (holder.applicationBinding.result?.starships?.size != 0) {
             val starshipsValue = processStarshipsValues(holder.applicationBinding.result?.starships)
             holder.applicationBinding.result?.starshipsValue = starshipsValue
-        }else{
+        } else {
             holder.applicationBinding.result?.starshipsValue = "NA"
         }
         holder.applicationBinding.executePendingBindings()

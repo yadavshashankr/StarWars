@@ -19,7 +19,7 @@ import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
 
-class MainPresenter: CoroutineScope{
+class MainPresenter : CoroutineScope {
 
 
     private var planetsTask: Response<Planets1>? = null
@@ -28,26 +28,26 @@ class MainPresenter: CoroutineScope{
     private var speciesTask: Response<Species1>? = null
     private var vehiclesTask: Response<Vehicles1>? = null
     private var starshipsTask: Response<Starships1>? = null
-    private lateinit  var getPlanetsTask: Deferred<Response<Planets1>>
+    private lateinit var getPlanetsTask: Deferred<Response<Planets1>>
     private lateinit var getPeopleTask: Deferred<Response<People1>>
     private var getFilmsTask: Deferred<Response<Films1>>? = null
     private var getSpeciesTask: Deferred<Response<Species1>>? = null
     private var getVehiclesTask: Deferred<Response<Vehicles1>>? = null
     private var getStarshipsTask: Deferred<Response<Starships1>>? = null
-    var PLANET_START_PAGE :Int = 1
+    var PLANET_START_PAGE: Int = 1
     var PLANET_END_PAGE: Int = 0
     var planet_firstStart: Boolean? = null
     var people_firstStart: Boolean? = null
-    var FILMS_START_PAGE :Int = 1
+    var FILMS_START_PAGE: Int = 1
     var FILMS_END_PAGE: Int = 0
     var films_firstStart: Boolean? = null
-    var SPECIES_START_PAGE :Int = 1
+    var SPECIES_START_PAGE: Int = 1
     var SPECIES_END_PAGE: Int = 0
     var species_firstStart: Boolean? = null
-    var VEHICLES_START_PAGE :Int = 1
+    var VEHICLES_START_PAGE: Int = 1
     var VEHICLES_END_PAGE: Int = 0
     var vehicles_firstStart: Boolean? = null
-    var STARSHIPS_START_PAGE :Int = 1
+    var STARSHIPS_START_PAGE: Int = 1
     var STARSHIPS_END_PAGE: Int = 0
     var starships_firstStart: Boolean? = null
     var iPresenter: IPresenter? = null
@@ -73,334 +73,327 @@ class MainPresenter: CoroutineScope{
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
-    constructor(presenter : IPresenter){
-        if (iPresenter == null){
-            iPresenter  = presenter
+    constructor(presenter: IPresenter) {
+        if (iPresenter == null) {
+            iPresenter = presenter
         }
 
     }
 
-     fun getPlanetsApis(page: Int): Percentage {
-         jobPlanets = CoroutineScope(Dispatchers.IO).launch {
-                 supervisorScope {
-                         val planetsService = ApiCall.create()
-                         getPlanetsTask = async(handler) {
-                             planetsService.getPlanets(page)
-                         }
-                         try {
-                             planetsTask = getPlanetsTask.await()
-                             withContext(Dispatchers.Main + jobPlanets as Job) {
-                                 try {
-                                     if (planetsTask?.isSuccessful as Boolean) {
+    fun getPlanetsApis(page: Int): Percentage {
+        jobPlanets = CoroutineScope(Dispatchers.IO).launch {
+            supervisorScope {
+                val planetsService = ApiCall.create()
+                getPlanetsTask = async(handler) {
+                    planetsService.getPlanets(page)
+                }
+                try {
+                    planetsTask = getPlanetsTask.await()
+                    withContext(Dispatchers.Main + jobPlanets as Job) {
+                        try {
+                            if (planetsTask?.isSuccessful as Boolean) {
 
-                                         // calculate First Page and Last Page on basis of total item counts and 10 items per page
+                                // calculate First Page and Last Page on basis of total item counts and 10 items per page
 
-                                          calculatePlanetsFirstPageLastPage()
+                                calculatePlanetsFirstPageLastPage()
 
 
-                                         // add received results in the Global arraylist
-                                         for (i in planetsTask?.body()?.results as ArrayList<Results1>) {
-                                             planetArticles?.add(i)
-                                         }
+                                // add received results in the Global arraylist
+                                for (i in planetsTask?.body()?.results as ArrayList<Results1>) {
+                                    planetArticles?.add(i)
+                                }
 
-                                         // calculating percentage of api completion on the basis of END Page
+                                // calculating percentage of api completion on the basis of END Page
 
-                                         updatePlanetPercentage(page)
+                                updatePlanetPercentage(page)
 
-                                         /* if further pages need to be traversed then set firstStart value as true
-                                     and if current page reaches last page then change the value of firstStart to false
-                                      */
+                                /* if further pages need to be traversed then set firstStart value as true
+                            and if current page reaches last page then change the value of firstStart to false
+                             */
 
-                                         setFlagIfPlanetPagesTraversed()
+                                setFlagIfPlanetPagesTraversed()
 
-                                         // increment page number after every successful api call
-                                         PLANET_START_PAGE++
+                                // increment page number after every successful api call
+                                PLANET_START_PAGE++
 
-                                         // if pages are still being visited, cancel the coroutine job and restart it
-                                         if (planestsPageTraversing()) {
+                                // if pages are still being visited, cancel the coroutine job and restart it
 
-                                          cancelPlanetCoroutineJobandRecallApi()
+                                if (planestsPageTraversing()) {
 
-                                         }
-                                         /* if firstStart is false that means all the pages has been traversed time to finally
-                                     quit making api calls and cancel the coroutine job
-                                      */
-                                         if (planetsPageTraversed()) {
+                                    cancelPlanetCoroutineJobandRecallApi()
 
-                                          cancelPlanetCoroutineJobandApiCall()
+                                }
+                                /* if firstStart is false that means all the pages has been traversed time to finally
+                            quit making api calls and cancel the coroutine job
+                             */
+                                if (planetsPageTraversed()) {
 
-                                         }
-                                     } else if (!planetsTask?.isSuccessful!!) {
-                                         iPresenter?.onFailure()
-                                     }
-                                 } catch (e: Exception) {
-                                     e.printStackTrace()
-                                 }
-                             }
-                         } catch (e: IOException) {
-                             e.printStackTrace()
-                             iPresenter?.onFailure()
-                         }
-                     }
-             }
-         return Percentage(peoplePercent,
-             planetPercent, filmsPercent, speciesPercent, vehiclesPercent, starshipsPercent)
+                                    cancelPlanetCoroutineJobandApiCall()
+
+                                }
+                            } else if (!planetsTask?.isSuccessful!!) {
+                                iPresenter?.onFailure()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    iPresenter?.onFailure()
+                }
+            }
         }
-
+        return Percentage(
+            peoplePercent,
+            planetPercent, filmsPercent, speciesPercent, vehiclesPercent, starshipsPercent
+        )
+    }
 
     fun getPeopleApis(page: Int) {
-         iPresenter?.isApiLoading(true)
-         jobPeople = CoroutineScope(Dispatchers.IO).launch {
-                 supervisorScope {
-                         val peopleService = ApiCall.create()
-                         getPeopleTask = async(handler) {
-                             peopleService.getPeople(page)
-                         }
-                         try {
-                             peopleTask = getPeopleTask.await()
-                             withContext(Dispatchers.Main + jobPeople as Job) {
-                                 try {
-                                     if (peopleTask?.isSuccessful as Boolean) {
+        iPresenter?.isApiLoading(true)
+        jobPeople = CoroutineScope(Dispatchers.IO).launch {
+            supervisorScope {
+                val peopleService = ApiCall.create()
+                getPeopleTask = async(handler) {
+                    peopleService.getPeople(page)
+                }
+                try {
+                    peopleTask = getPeopleTask.await()
+                    withContext(Dispatchers.Main + jobPeople as Job) {
+                        try {
+                            if (peopleTask?.isSuccessful as Boolean) {
 
-                                         for (i in peopleTask?.body()?.results as ArrayList<Results1>) {
-                                             peopleArticles?.add(i)
-                                         }
+                                for (i in peopleTask?.body()?.results as ArrayList<Results1>) {
+                                    peopleArticles?.add(i)
+                                }
 
-                                         updatePeoplePercent()
+                                updatePeoplePercent()
 
-                                         cancelandUpdatePeoplesList()
+                                cancelandUpdatePeoplesList()
 
-                                     } else {
-                                         iPresenter?.isApiLoading(false)
-                                         iPresenter?.onFailure()
-                                     }
-                                 } catch (e: Exception) {
-                                     e.printStackTrace()
-                                 }
-                             }
-                         } catch (e: IOException) {
-                             e.printStackTrace()
-                             iPresenter?.onFailure()
-                         }
+                            } else {
+                                iPresenter?.isApiLoading(false)
+                                iPresenter?.onFailure()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    iPresenter?.onFailure()
+                }
 
-                     }
-             }
-     }
-
-
-
+            }
+        }
+    }
 
     fun getFilmsApis(page: Int) {
 
-            jobFilms = CoroutineScope(Dispatchers.IO).launch {
-                supervisorScope {
-                        val filmsService = ApiCall.create()
-                        getFilmsTask = async(handler) {
-                            filmsService.getFilms(page)
-                        }
+        jobFilms = CoroutineScope(Dispatchers.IO).launch {
+            supervisorScope {
+                val filmsService = ApiCall.create()
+                getFilmsTask = async(handler) {
+                    filmsService.getFilms(page)
+                }
+                try {
+                    filmsTask = getFilmsTask?.await()
+                    withContext(Dispatchers.Main + jobFilms as Job) {
                         try {
-                            filmsTask = getFilmsTask?.await()
-                            withContext(Dispatchers.Main + jobFilms as Job) {
-                                try {
-                                    if (filmsTask?.isSuccessful as Boolean) {
+                            if (filmsTask?.isSuccessful as Boolean) {
 
-                                        calculateFilmsFirstPageLastPage()
+                                calculateFilmsFirstPageLastPage()
 
-                                        for (i in filmsTask?.body()?.results as ArrayList<Results1>) {
-                                            filmArticles?.add(i)
-                                        }
-
-                                        updateFilmsPercent(page)
-
-                                        setFlagIfFilmsPageTraversed()
-
-                                        FILMS_START_PAGE++
-
-                                        if (filmsPagesTraversing()) {
-                                            cancelFilmsCoroutinesJobandRecallApi()
-                                        }
-
-                                        if (filmsPageTraversed()) {
-                                            cancelFilmsCoroutinesJobandApiCall()
-                                        }
-                                    } else if (!filmsTask?.isSuccessful!!) {
-                                        iPresenter?.onFailure()
-                                    }
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
+                                for (i in filmsTask?.body()?.results as ArrayList<Results1>) {
+                                    filmArticles?.add(i)
                                 }
+
+                                updateFilmsPercent(page)
+
+                                setFlagIfFilmsPageTraversed()
+
+                                FILMS_START_PAGE++
+
+                                if (filmsPagesTraversing()) {
+                                    cancelFilmsCoroutinesJobandRecallApi()
+                                }
+
+                                if (filmsPageTraversed()) {
+                                    cancelFilmsCoroutinesJobandApiCall()
+                                }
+                            } else if (!filmsTask?.isSuccessful!!) {
+                                iPresenter?.onFailure()
                             }
-                        } catch (e: IOException) {
+                        } catch (e: Exception) {
                             e.printStackTrace()
-                            iPresenter?.onFailure()
                         }
                     }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    iPresenter?.onFailure()
+                }
             }
-     }
-
-
+        }
+    }
 
     fun getSpeciesApis(page: Int) {
-         jobSpecies = CoroutineScope(Dispatchers.IO).launch {
-                supervisorScope {
-                        val speciesServices = ApiCall.create()
-                        getSpeciesTask = async(handler) {
-                            speciesServices.getSpecies(page)
-                        }
+        jobSpecies = CoroutineScope(Dispatchers.IO).launch {
+            supervisorScope {
+                val speciesServices = ApiCall.create()
+                getSpeciesTask = async(handler) {
+                    speciesServices.getSpecies(page)
+                }
+                try {
+                    speciesTask = getSpeciesTask?.await()
+                    withContext(Dispatchers.Main + jobSpecies as Job) {
                         try {
-                            speciesTask = getSpeciesTask?.await()
-                            withContext(Dispatchers.Main + jobSpecies as Job) {
-                                try {
-                                    if (speciesTask?.isSuccessful as Boolean) {
+                            if (speciesTask?.isSuccessful as Boolean) {
 
-                                        calculateSpeciesFirstandLastPage()
+                                calculateSpeciesFirstandLastPage()
 
 
-                                        for (i in speciesTask?.body()?.results as ArrayList<Results1>) {
-                                            speciesArticles?.add(i)
-                                        }
-
-                                        updateSpeciesPercentage(page)
-
-                                        setFlagIfSpeciesPagesTraversed()
-
-                                        SPECIES_START_PAGE++
-
-                                        if (speciesTraversing()) {
-
-                                            cancelSpeciesCoroutineJobandRecallApi()
-
-                                        }
-                                        if (speciesPagesTraversed()) {
-
-                                            cancelSpeciesCoroutineJobandApiCall()
-
-                                        }
-                                    } else if (!speciesTask?.isSuccessful!!) {
-                                        iPresenter?.onFailure()
-                                    }
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
+                                for (i in speciesTask?.body()?.results as ArrayList<Results1>) {
+                                    speciesArticles?.add(i)
                                 }
+
+                                updateSpeciesPercentage(page)
+
+                                setFlagIfSpeciesPagesTraversed()
+
+                                SPECIES_START_PAGE++
+
+                                if (speciesTraversing()) {
+
+                                    cancelSpeciesCoroutineJobandRecallApi()
+
+                                }
+                                if (speciesPagesTraversed()) {
+
+                                    cancelSpeciesCoroutineJobandApiCall()
+
+                                }
+                            } else if (!speciesTask?.isSuccessful!!) {
+                                iPresenter?.onFailure()
                             }
-                        } catch (e: IOException) {
+                        } catch (e: Exception) {
                             e.printStackTrace()
-                            iPresenter?.onFailure()
                         }
                     }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    iPresenter?.onFailure()
+                }
             }
-     }
-
-
+        }
+    }
 
     fun getVehiclesApis(page: Int) {
 
-         jobVehicles = CoroutineScope(Dispatchers.IO).launch {
+        jobVehicles = CoroutineScope(Dispatchers.IO).launch {
 
-                supervisorScope {
+            supervisorScope {
 
-                        val vehiclesService = ApiCall.create()
-                        getVehiclesTask = async(handler) {
-                            vehiclesService.getVehicles(page)
-                        }
+                val vehiclesService = ApiCall.create()
+                getVehiclesTask = async(handler) {
+                    vehiclesService.getVehicles(page)
+                }
+                try {
+                    vehiclesTask = getVehiclesTask?.await()
+                    withContext(Dispatchers.Main + jobVehicles as Job) {
                         try {
-                            vehiclesTask = getVehiclesTask?.await()
-                            withContext(Dispatchers.Main + jobVehicles as Job) {
-                                try {
-                                    if (vehiclesTask?.isSuccessful as Boolean) {
+                            if (vehiclesTask?.isSuccessful as Boolean) {
 
-                                        calculateVehiclesFirstandLastPage()
+                                calculateVehiclesFirstandLastPage()
 
-                                        for (i in vehiclesTask?.body()?.results as ArrayList<Results1>) {
-                                            vehiclesArticles?.add(i)
-                                        }
-
-                                        updateVehiclesPercent(page)
-
-                                        setFlagIfVehiclesTraversed()
-
-                                        VEHICLES_START_PAGE++
-
-                                        if (vehiclesPagesTraversering()) {
-
-                                            cancelVehiclesCoroutinesJobandRecallAPi()
-
-                                        }
-                                        if (vehiclesPagesTraversed()) {
-
-                                            cancelVehiclesCoroutinesJobandApiCall()
-
-                                        }
-                                    } else if (!vehiclesTask?.isSuccessful!!) {
-                                        iPresenter?.onFailure()
-                                    }
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
+                                for (i in vehiclesTask?.body()?.results as ArrayList<Results1>) {
+                                    vehiclesArticles?.add(i)
                                 }
+
+                                updateVehiclesPercent(page)
+
+                                setFlagIfVehiclesTraversed()
+
+                                VEHICLES_START_PAGE++
+
+                                if (vehiclesPagesTraversering()) {
+
+                                    cancelVehiclesCoroutinesJobandRecallAPi()
+
+                                }
+                                if (vehiclesPagesTraversed()) {
+
+                                    cancelVehiclesCoroutinesJobandApiCall()
+
+                                }
+                            } else if (!vehiclesTask?.isSuccessful!!) {
+                                iPresenter?.onFailure()
                             }
-                        } catch (e: IOException) {
+                        } catch (e: Exception) {
                             e.printStackTrace()
-                            iPresenter?.onFailure()
                         }
                     }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    iPresenter?.onFailure()
+                }
             }
-     }
-
-
+        }
+    }
 
     fun getStarshipsApis(page: Int) {
 
-         jobStarships = CoroutineScope(Dispatchers.IO).launch {
+        jobStarships = CoroutineScope(Dispatchers.IO).launch {
 
-                 supervisorScope {
-            val starshipsService = ApiCall.create()
-            getStarshipsTask = async(handler) {
-                starshipsService.getStarships(page)
-            }
-            try {
-                starshipsTask = getStarshipsTask?.await()
-
-                withContext(Dispatchers.Main + jobStarships as Job) {
-                    try {
-                        if (starshipsTask?.isSuccessful as Boolean) {
-
-                            calculateStarshipsFirsandLastPage()
-
-                            for (i in starshipsTask?.body()?.results as ArrayList<Results1>) {
-                                starshipsArticles?.add(i)
-                            }
-
-                            updateStarshipsPercentage(page)
-
-                            setFlagIfStarshipsPagesTraversed()
-
-                            STARSHIPS_START_PAGE++
-
-                            if (starshipsTraversing()) {
-                                cancelStarshipsCoroutinesJobandRecallApi()
-
-                            }
-                            if (starshipsTraversed()) {
-                                cancelStarshipsCoroutinesJobandApiCall()
-                            }
-                        } else if (!starshipsTask?.isSuccessful!!) {
-                            iPresenter?.onFailure()
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+            supervisorScope {
+                val starshipsService = ApiCall.create()
+                getStarshipsTask = async(handler) {
+                    starshipsService.getStarships(page)
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
-                iPresenter?.onFailure()
+                try {
+                    starshipsTask = getStarshipsTask?.await()
+
+                    withContext(Dispatchers.Main + jobStarships as Job) {
+                        try {
+                            if (starshipsTask?.isSuccessful as Boolean) {
+
+                                calculateStarshipsFirsandLastPage()
+
+                                for (i in starshipsTask?.body()?.results as ArrayList<Results1>) {
+                                    starshipsArticles?.add(i)
+                                }
+
+                                updateStarshipsPercentage(page)
+
+                                setFlagIfStarshipsPagesTraversed()
+
+                                STARSHIPS_START_PAGE++
+
+                                if (starshipsTraversing()) {
+                                    cancelStarshipsCoroutinesJobandRecallApi()
+
+                                }
+                                if (starshipsTraversed()) {
+                                    cancelStarshipsCoroutinesJobandApiCall()
+                                }
+                            } else if (!starshipsTask?.isSuccessful!!) {
+                                iPresenter?.onFailure()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    iPresenter?.onFailure()
+                }
             }
         }
-       }
-     }
+    }
 
 
     // post api call to send Fav data to webhook
-    fun postFavApi(favData: FavData1){
+    fun postFavApi(favData: FavData1) {
         val apiService = FavApiCall.create()
         val call = apiService.store(favData)
 
@@ -757,7 +750,7 @@ class MainPresenter: CoroutineScope{
     }
 
     private fun planestsPageTraversing(): Boolean {
-        return  PLANET_START_PAGE <= PLANET_END_PAGE
+        return PLANET_START_PAGE <= PLANET_END_PAGE
     }
 
     private fun setFlagIfPlanetPagesTraversed() {
