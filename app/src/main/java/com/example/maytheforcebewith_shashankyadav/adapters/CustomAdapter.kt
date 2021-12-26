@@ -4,24 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.maytheforcebewith_shashankyadav.R
 import com.example.maytheforcebewith_shashankyadav.databinding.ItemBinding
-
-import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.rotateDown
-import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.rotateUp
 import com.example.maytheforcebewith_shashankyadav.globals.RecyclerItemClickListener
 import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.planetHashMap
 import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Companion.processFilmsValues
 import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Companion.processSpeciesValues
 import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Companion.processStarshipsValues
 import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Companion.processVehiclesValues
-import com.example.maytheforcebewith_shashankyadav.responses.FavData1
 import com.example.maytheforcebewith_shashankyadav.responses.Results1
 import com.example.maytheforcebewith_shashankyadav.ui.CharacterDetail
-import com.example.maytheforcebewith_shashankyadav.utils.Tools
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.apiFavourite
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.cotractItemRow
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.expanditemRow
@@ -30,8 +24,6 @@ import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.resetFa
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.rowItemExpanded
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setFavourite
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setFavouriteIcon
-import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setHeaderToBlack
-import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setHeaderToWhite
 import com.example.maytheforcebewith_shashankyadav.utils.Tools.Companion.setUnFavouriteIcon
 
 

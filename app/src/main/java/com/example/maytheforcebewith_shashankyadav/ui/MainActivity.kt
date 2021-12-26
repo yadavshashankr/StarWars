@@ -1,12 +1,9 @@
 package com.example.maytheforcebewith_shashankyadav.ui
 
-import android.content.Context
-import android.net.ConnectivityManager
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextWatcher
-import android.util.Log
-import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,40 +16,17 @@ import java.util.*
 import kotlin.collections.ArrayList
 import android.text.Editable
 import android.view.View
-import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.databinding.DataBindingUtil
 import com.example.maytheforcebewith_shashankyadav.databinding.ActivityMainBinding
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.FILMS_REQUEST
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.PEOPLE_REQUEST
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.PLANETS_REQUEST
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.SPECIES_REQUEST
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.STARSHIPS_REQUEST
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.VEHICLES_REQUEST
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.filmArticles
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.filmsHashMap
+
 import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.peopleArticles
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.planetArticles
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.planetHashMap
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.speciesArticles
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.speciesHashMap
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.starshipsArticles
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.starshipsHashMap
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.vehiclesArticles
-import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.vehiclesHashMap
-import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData
-import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Companion.processFilms
-import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Companion.processPlanets
-import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Companion.processSpecies
-import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Companion.processStarships
-import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData.Companion.processVehicles
+
 import com.example.maytheforcebewith_shashankyadav.responses.FavData1
 import com.example.maytheforcebewith_shashankyadav.responses.Percentage
 import com.example.maytheforcebewith_shashankyadav.responses.Results1
 import com.example.maytheforcebewith_shashankyadav.utils.NetworkCheck.Companion.verifyAvailableNetwork
 import kotlinx.coroutines.*
-import java.lang.reflect.Array
 
 /*MainActivity shows Expandable list and allows user to Set favourite to any character*/
 class MainActivity : AppCompatActivity(), IPresenter {
