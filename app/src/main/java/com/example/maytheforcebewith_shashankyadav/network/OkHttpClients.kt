@@ -13,9 +13,9 @@ class OkHttpClients {
         fun getOkHttpClient1(): OkHttpClient {
 
             if (okHttpClient == null) {
-                okHttpClient = OkHttpClient.Builder().connectTimeout(2, TimeUnit.MINUTES)
-                    .writeTimeout(2, TimeUnit.MINUTES)
-                    .readTimeout(2, TimeUnit.MINUTES)
+                okHttpClient = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
                     .addInterceptor(Interceptors.getLoggingInterceptor()).build()
             }
             return okHttpClient as OkHttpClient
