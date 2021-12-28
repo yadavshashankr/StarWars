@@ -88,7 +88,7 @@ class MainPresenter : CoroutineScope {
                 }
                 try {
                     planetsTask = getPlanetsTask.await()
-                    withContext(Dispatchers.Main + jobPlanets as Job) {
+                    withContext(jobPlanets as Job) {
                         try {
                             if (planetsTask?.isSuccessful as Boolean) {
 
@@ -159,7 +159,7 @@ class MainPresenter : CoroutineScope {
                 }
                 try {
                     peopleTask = getPeopleTask.await()
-                    withContext(Dispatchers.Main + jobPeople as Job) {
+                    withContext(jobPeople as Job) {
                         try {
                             if (peopleTask?.isSuccessful as Boolean) {
 
@@ -198,7 +198,7 @@ class MainPresenter : CoroutineScope {
                 }
                 try {
                     filmsTask = getFilmsTask?.await()
-                    withContext(Dispatchers.Main + jobFilms as Job) {
+                    withContext(jobFilms as Job) {
                         try {
                             if (filmsTask?.isSuccessful as Boolean) {
 
@@ -245,7 +245,7 @@ class MainPresenter : CoroutineScope {
                 }
                 try {
                     speciesTask = getSpeciesTask?.await()
-                    withContext(Dispatchers.Main + jobSpecies as Job) {
+                    withContext( jobSpecies as Job) {
                         try {
                             if (speciesTask?.isSuccessful as Boolean) {
 
@@ -299,7 +299,7 @@ class MainPresenter : CoroutineScope {
                 }
                 try {
                     vehiclesTask = getVehiclesTask?.await()
-                    withContext(Dispatchers.Main + jobVehicles as Job) {
+                    withContext(jobVehicles as Job) {
                         try {
                             if (vehiclesTask?.isSuccessful as Boolean) {
 
@@ -352,7 +352,7 @@ class MainPresenter : CoroutineScope {
                 try {
                     starshipsTask = getStarshipsTask?.await()
 
-                    withContext(Dispatchers.Main + jobStarships as Job) {
+                    withContext(jobStarships as Job) {
                         try {
                             if (starshipsTask?.isSuccessful as Boolean) {
 
