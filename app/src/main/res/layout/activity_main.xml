@@ -10,7 +10,7 @@
     android:layout_height="match_parent"
     android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar"
     android:background="@color/black"
-    tools:context=".ui.MainActivity">
+    tools:context="com.shashank.maytheforcebewith_shashankyadav.ui.MainActivity">
 
     <Toolbar
         app:layout_constraintStart_toStartOf="parent"

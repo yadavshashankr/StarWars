@@ -9,14 +9,14 @@
 
         <variable
             name="percent"
-            type="com.example.maytheforcebewith_shashankyadav.responses.Percentage" />
+            type="com.shashank.maytheforcebewith_shashankyadav.responses.Percentage" />
     </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:background="@drawable/starwarswalp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.SplashScreen">
+    tools:context="com.shashank.maytheforcebewith_shashankyadav.ui.SplashScreen">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

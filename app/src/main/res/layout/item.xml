@@ -6,7 +6,7 @@
     <data>
         <variable
             name="result"
-            type="com.example.maytheforcebewith_shashankyadav.responses.Results1" />
+            type="com.shashank.maytheforcebewith_shashankyadav.responses.Results1" />
         <import type="android.view.View" />
     </data>
 
