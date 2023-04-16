@@ -1,13 +1,16 @@
 package com.example.maytheforcebewith_shashankyadav.utils
 
+
 import android.content.Context
 import android.view.View
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import com.example.maytheforcebewith_shashankyadav.R
 import com.example.maytheforcebewith_shashankyadav.databinding.ItemBinding
 import com.example.maytheforcebewith_shashankyadav.globals.RecyclerItemClickListener
 import com.example.maytheforcebewith_shashankyadav.responses.FavData1
+
 
 class Tools {
 
@@ -85,17 +88,13 @@ class Tools {
             recyclerItemClickListener: RecyclerItemClickListener?
         ) {
             applicationBinding.rlExpand.visibility = View.VISIBLE
-            applicationBinding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24_black)
-            rotateDown(applicationBinding.ivArrow)
-            setHeaderToWhite(context, applicationBinding)
+            applicationBinding.ivArrow.setImageDrawable(ContextCompat.getDrawable(applicationBinding.ivArrow.context, R.drawable.ic_baseline_keyboard_arrow_down_24_black))
             recyclerItemClickListener?.onItemClick(null, position, itemView)
         }
 
         fun cotractItemRow(applicationBinding: ItemBinding, context: Context?) {
             applicationBinding.rlExpand.visibility = View.GONE
-            applicationBinding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
-            rotateUp(applicationBinding.ivArrow)
-            setHeaderToBlack(context, applicationBinding)
+            applicationBinding.ivArrow.setImageDrawable(ContextCompat.getDrawable(applicationBinding.ivArrow.context, R.drawable.ic_baseline_keyboard_arrow_down_24))
         }
 
         fun rowItemExpanded(applicationBinding: ItemBinding): Boolean {

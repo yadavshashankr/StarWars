@@ -9,6 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar"
+    android:background="@color/black"
     tools:context=".ui.MainActivity">
 
     <Toolbar
@@ -35,6 +36,9 @@
             android:layout_height="match_parent"
             android:drawableLeft="@drawable/ic_baseline_search_24"
             android:background="@color/black"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:imeOptions="actionDone"
             android:textSize="@dimen/_18ssp"
             android:hint="@string/search"
             android:textColor="@color/white"

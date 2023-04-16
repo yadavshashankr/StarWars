@@ -12,7 +12,6 @@ import com.example.maytheforcebewith_shashankyadav.adapters.CustomAdapter
 import com.example.maytheforcebewith_shashankyadav.presenters.IPresenter
 import com.example.maytheforcebewith_shashankyadav.presenters.MainPresenter
 import com.example.maytheforcebewith_shashankyadav.globals.RecyclerItemClickListener
-import java.util.*
 import kotlin.collections.ArrayList
 import android.text.Editable
 import android.view.View
@@ -26,7 +25,6 @@ import com.example.maytheforcebewith_shashankyadav.responses.FavData1
 import com.example.maytheforcebewith_shashankyadav.responses.Percentage
 import com.example.maytheforcebewith_shashankyadav.responses.Results1
 import com.example.maytheforcebewith_shashankyadav.utils.NetworkCheck.Companion.verifyAvailableNetwork
-import kotlinx.coroutines.*
 
 /*MainActivity shows Expandable list and allows user to Set favourite to any character*/
 class MainActivity : AppCompatActivity(), IPresenter {
@@ -46,7 +44,7 @@ class MainActivity : AppCompatActivity(), IPresenter {
     private var recyclerItemClickListener: RecyclerItemClickListener? = null
     private var params: RelativeLayout.LayoutParams? = null
     private var pageNumber: Int = 1
-    var activityMainBinding: ActivityMainBinding? = null
+    lateinit var activityMainBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +52,7 @@ class MainActivity : AppCompatActivity(), IPresenter {
         activityMainBinding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
-        activityMainBinding?.lifecycleOwner = this
+        activityMainBinding.lifecycleOwner = this
 
         initPresenter()
     }
@@ -70,7 +68,7 @@ class MainActivity : AppCompatActivity(), IPresenter {
             RelativeLayout.LayoutParams.MATCH_PARENT,
             RelativeLayout.LayoutParams.WRAP_CONTENT
         )
-        activityMainBinding?.list?.apply {
+        activityMainBinding.list.apply {
             layoutManager = mlayoutManager
             adapter = mAdapter
         }
@@ -78,14 +76,20 @@ class MainActivity : AppCompatActivity(), IPresenter {
 
     override fun onSuccess(articles: ArrayList<Results1>, request: String?) {
         peopleArticles1 = articles
-        setAdapterData(peopleArticles1)
+        runOnUiThread {
+            setAdapterData(peopleArticles1)
+        }
+
     }
 
     override fun isApiLoading(isLoading: Boolean?) {
-        if (isLoading as Boolean) {
-            activityMainBinding?.mainPb?.visibility = View.VISIBLE
-        } else {
-            activityMainBinding?.mainPb?.visibility = View.GONE
+        runOnUiThread{
+            if (isLoading as Boolean) {
+                activityMainBinding.mainPb.visibility = View.VISIBLE
+                activityMainBinding.list.isClickable = false
+            } else {
+                activityMainBinding.mainPb.visibility = View.GONE
+            }
         }
     }
 
@@ -96,7 +100,7 @@ class MainActivity : AppCompatActivity(), IPresenter {
     private fun activateListeners() {
 
         // to search for each character in the string and load the adapter everytime if matched string is found
-        activityMainBinding?.etSearch?.addTextChangedListener(object : TextWatcher {
+        activityMainBinding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(arg0: CharSequence, arg1: Int, arg2: Int, arg3: Int) {}
             override fun beforeTextChanged(arg0: CharSequence, arg1: Int, arg2: Int, arg3: Int) {}
             override fun afterTextChanged(arg0: Editable) {
@@ -104,8 +108,7 @@ class MainActivity : AppCompatActivity(), IPresenter {
 
                     searchArticles = ArrayList()
                     for (d in peopleArticles1 as ArrayList) {
-                        if (d.name != null && d.name!!.toLowerCase()
-                                .contains(arg0.toString().toLowerCase())
+                        if (d.name.lowercase().contains(arg0.toString().lowercase())
                         ) {
                             searchArticles?.add(d)
                         }
@@ -119,7 +122,7 @@ class MainActivity : AppCompatActivity(), IPresenter {
             }
         }).also {
 
-            activityMainBinding?.list?.addOnScrollListener(object :
+            activityMainBinding.list.addOnScrollListener(object :
                 RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -138,9 +141,7 @@ class MainActivity : AppCompatActivity(), IPresenter {
                             if (!isLoading && (totalItemCount - visbileItem) <= (pastVisibleItem + viewThreshold) && pageNumber < 10) {
                                 /* if total items list reach the threshold within the context of visible items and past visible item
                                then call api */
-                                pageNumber++
-
-                                mMainPresenter.getPeopleApis(pageNumber)
+                                mMainPresenter.getPeopleApis(++pageNumber)
 
                                 isLoading = true
                                 activatedOnce = null
@@ -167,9 +168,9 @@ class MainActivity : AppCompatActivity(), IPresenter {
                         mMainPresenter.postFavApi(fav)
                     } else {
                         val itemToScroll: Int =
-                            activityMainBinding?.list?.getChildLayoutPosition(view) as Int
+                            activityMainBinding.list?.getChildLayoutPosition(view) as Int
                         val centerOfScreen: Int =
-                            activityMainBinding?.list?.width as Int / 2 - view.width / 2
+                            activityMainBinding.list?.width as Int / 2 - view.width / 2
                         mlayoutManager.scrollToPositionWithOffset(itemToScroll, centerOfScreen)
                     }
                 }
@@ -200,6 +201,8 @@ class MainActivity : AppCompatActivity(), IPresenter {
     override fun onResume() {
         super.onResume()
         activateListeners()
+        activityMainBinding.etSearch.setText("")
+        activityMainBinding.etSearch.clearFocus()
     }
 
     override fun onBackPressed() {

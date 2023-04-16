@@ -2,9 +2,10 @@ package com.example.maytheforcebewith_shashankyadav.ui
 
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.example.maytheforcebewith_shashankyadav.R
 import com.example.maytheforcebewith_shashankyadav.databinding.ActivitySplashScreenBinding
@@ -15,6 +16,7 @@ import com.example.maytheforcebewith_shashankyadav.process.ProcessApiData
 import com.example.maytheforcebewith_shashankyadav.responses.Percentage
 import com.example.maytheforcebewith_shashankyadav.responses.Results1
 import com.example.maytheforcebewith_shashankyadav.utils.NetworkCheck.Companion.verifyAvailableNetwork
+
 
 /* SplashScreen acts as a splash activity and also displays data received by simultaneous api calls
 using coroutines*/
@@ -28,7 +30,7 @@ class SplashScreen : AppCompatActivity(), IPresenter {
     private var people: Boolean = false
     private var peopleArticles1: ArrayList<Results1>? = ArrayList()
     private lateinit var mMainPresenter: MainPresenter
-    var bindingSplash: ActivitySplashScreenBinding? = null
+    lateinit var bindingSplash: ActivitySplashScreenBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,23 +41,28 @@ class SplashScreen : AppCompatActivity(), IPresenter {
         )
         mMainPresenter = MainPresenter(this)
 
-        bindingSplash?.lifecycleOwner = this
+        bindingSplash.lifecycleOwner = this
 
-        ApplicationConstant.planetArticles = ArrayList()
-        ApplicationConstant.peopleArticles = ArrayList()
-        ApplicationConstant.speciesArticles = ArrayList()
-        ApplicationConstant.filmArticles = ArrayList()
-        ApplicationConstant.vehiclesArticles = ArrayList()
-        ApplicationConstant.starshipsArticles = ArrayList()
-        ApplicationConstant.planetHashMap = HashMap()
-        ApplicationConstant.filmsHashMap = HashMap()
-        ApplicationConstant.speciesHashMap = HashMap()
-        ApplicationConstant.vehiclesHashMap = HashMap()
-        ApplicationConstant.starshipsHashMap = HashMap()
+        bindingSplash.ivRefresh.setOnClickListener {
+            restart()
+        }
 
+        starWarsApiCall()
     }
 
+    private fun restart() {
+        val intentSplashScreen = intent
+        finish()
+        startActivity(intentSplashScreen)
+    }
 
+    private fun starWarsApiCall(){
+        if (verifyAvailableNetwork(this)) {
+            mMainPresenter.initApis()
+        } else {
+            Toast.makeText(this, "Please connect to Internet", Toast.LENGTH_SHORT).show()
+        }
+    }
     override fun onSuccess(articles: ArrayList<Results1>, request: String?) {
         // receiving responses and checking if all are received
         when (request) {
@@ -86,21 +93,22 @@ class SplashScreen : AppCompatActivity(), IPresenter {
         if (people && planets && films && species && vehicles && starships) {
             // if all responses are received then moving to Main Activity
             runOnUiThread {
+                bindingSplash.ivRefresh.isVisible = true
                 startActivity(
                     Intent(this, MainActivity::class.java)
                 )
-                finish()
             }
         }
     }
 
     override fun onApiPercentage(percent: Percentage?) {
         // load determinate progress bars with percentage data received from simultaneous api calls
-        bindingSplash?.percent = percent
+        bindingSplash.percent = percent
     }
 
     override fun onFailure() {
         runOnUiThread {
+            bindingSplash.ivRefresh.isVisible = true
             Toast.makeText(this, "Error Retrieving Data from Server !", Toast.LENGTH_SHORT).show()
         }
     }
@@ -108,19 +116,4 @@ class SplashScreen : AppCompatActivity(), IPresenter {
     override fun isApiLoading(isLoading: Boolean?) {}
     override fun onSuccessCode(code: Int?) {}
 
-
-    override fun onResume() {
-        super.onResume()
-        // calling all the api's simultaneously
-        if (verifyAvailableNetwork(this)) {
-            mMainPresenter.getPlanetsApis(1)
-            mMainPresenter.getPeopleApis(1)
-            mMainPresenter.getFilmsApis(1)
-            mMainPresenter.getSpeciesApis(1)
-            mMainPresenter.getVehiclesApis(1)
-            mMainPresenter.getStarshipsApis(1)
-        } else {
-            Toast.makeText(this, "Please connect to Internet", Toast.LENGTH_SHORT).show()
-        }
-    }
 }

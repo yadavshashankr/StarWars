@@ -21,16 +21,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:fillViewport="true">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-
-
 
 
     <LinearLayout
@@ -38,7 +35,9 @@
         android:background="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
             android:layout_margin="@dimen/_5sdp"
@@ -104,14 +103,14 @@
 
         <ImageView
             android:id="@+id/iv_fav"
-
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
             android:layout_gravity="center"
             android:padding="@dimen/_10sdp"
-
+            android:visibility="gone"
             android:layout_toStartOf="@+id/iv_arrow"
             android:src="@drawable/ic_baseline_favorite_border_24" />
+
         <RelativeLayout
             android:layout_margin="@dimen/_5sdp"
             android:layout_width="0dp"
@@ -124,6 +123,7 @@
             <ImageView
                 android:id="@+id/iv_arrow"
                 android:padding="@dimen/_5sdp"
+                android:rotation="270"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_alignParentRight="true"
@@ -136,16 +136,21 @@
     </LinearLayout>
 
         <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_2sdp"
-            android:background="@color/white" />
+            android:background="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_head"/>
 
     <RelativeLayout
         android:id="@+id/rl_expand"
         android:visibility="visible"
-        android:background="@color/white"
+        android:background="@color/black"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view">
 
         <View
             android:layout_width="match_parent"
@@ -163,11 +168,11 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <RelativeLayout
                         android:layout_margin="@dimen/_5sdp"
                         android:layout_width="match_parent"
@@ -182,7 +187,7 @@
                             android:layout_marginTop="@dimen/_5sdp"
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:text="@string/mass"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_10ssp" />
 
                         <TextView
@@ -196,7 +201,7 @@
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:layout_marginBottom="@dimen/_2sdp"
                             android:text="@{result.mass}"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_12ssp" />
 
                         <TextView
@@ -209,7 +214,7 @@
                             android:layout_marginTop="@dimen/_5sdp"
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:text="@string/height"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_10ssp" />
 
                         <TextView
@@ -224,7 +229,7 @@
                             android:layout_marginBottom="@dimen/_2sdp"
                             android:text="@{result.height}"
                             android:textAlignment="gravity"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_12ssp" />
 
                         <TextView
@@ -237,7 +242,7 @@
                             android:layout_marginTop="@dimen/_5sdp"
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:text="@string/gender"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_10ssp" />
 
                         <TextView
@@ -250,7 +255,7 @@
                             android:layout_marginTop="@dimen/_2sdp"
                             android:text="@{result.gender}"
                             android:textAlignment="gravity"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_12ssp" />
 
 
@@ -261,7 +266,7 @@
                 <View
                     android:layout_width="@dimen/_2sdp"
                     android:layout_height="match_parent"
-                    android:background="@color/black"/>
+                    android:background="@color/white"/>
 
 
                 <LinearLayout
@@ -284,7 +289,7 @@
                             android:layout_marginTop="@dimen/_5sdp"
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:text="@string/hair_color"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_10ssp" />
 
                         <TextView
@@ -298,7 +303,7 @@
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:layout_marginBottom="@dimen/_2sdp"
                             android:text="@{result.hair_color}"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_12ssp" />
 
                         <TextView
@@ -311,7 +316,7 @@
                             android:layout_marginTop="@dimen/_5sdp"
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:text="@string/skin_color"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_10ssp" />
 
                         <TextView
@@ -326,7 +331,7 @@
                             android:layout_marginBottom="@dimen/_2sdp"
                             android:text="@{result.skin_color}"
                             android:textAlignment="gravity"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_12ssp" />
 
                         <TextView
@@ -339,7 +344,7 @@
                             android:layout_marginTop="@dimen/_5sdp"
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:text="@string/eye_color"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_10ssp" />
 
                         <TextView
@@ -353,7 +358,7 @@
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:text="@{result.eye_color}"
                             android:textAlignment="gravity"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="@dimen/_12ssp" />
 
 
@@ -367,7 +372,7 @@
             android:layout_below="@+id/ll_mid"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_2sdp"
-            android:background="@color/black"/>
+            android:background="@color/white"/>
 
 
 
@@ -376,7 +381,7 @@
             android:layout_below="@+id/ll_mid"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
-            android:background="@color/black"/>
+            android:background="@color/white"/>
 
         <LinearLayout
             android:id="@+id/ll_bot1"
@@ -404,7 +409,7 @@
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:layout_marginBottom="@dimen/_2sdp"
                     android:text="@string/homeworld"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="@dimen/_10ssp" />
 
                 <TextView
@@ -417,7 +422,7 @@
                     android:layout_marginTop="@dimen/_2sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:text="@{result.homeWorldValue}"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="@dimen/_12ssp" />
 
             </RelativeLayout>
@@ -429,7 +434,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_2sdp"
             android:layout_below="@+id/ll_bot1"
-            android:background="@color/black" />
+            android:background="@color/white" />
        <LinearLayout
            android:layout_below="@+id/v_hor1"
            android:layout_width="match_parent"
@@ -457,7 +462,7 @@
                        android:layout_marginTop="@dimen/_5sdp"
                        android:layout_marginEnd="@dimen/_5sdp"
                        android:text="@string/films"
-                       android:textColor="@android:color/black"
+                       android:textColor="@android:color/white"
                        android:textSize="@dimen/_10ssp" />
 
                    <TextView
@@ -470,14 +475,14 @@
                        android:layout_marginTop="@dimen/_2sdp"
                        android:layout_marginEnd="@dimen/_5sdp"
                        android:text="@{result.filmsValues}"
-                       android:textColor="@android:color/black"
+                       android:textColor="@android:color/white"
                        android:textSize="@dimen/_12ssp" />
 
                </RelativeLayout>
                <View
                    android:layout_width="@dimen/_2sdp"
                    android:layout_height="match_parent"
-                   android:background="@color/black"/>
+                   android:background="@color/white"/>
                <RelativeLayout
                    android:layout_margin="@dimen/_5sdp"
                    android:layout_width="0dp"
@@ -493,7 +498,7 @@
                        android:layout_marginTop="@dimen/_5sdp"
                        android:layout_marginEnd="@dimen/_5sdp"
                        android:text="@string/vehicles"
-                       android:textColor="@android:color/black"
+                       android:textColor="@android:color/white"
                        android:textSize="@dimen/_10ssp" />
 
                    <TextView
@@ -506,7 +511,7 @@
                        android:layout_marginTop="@dimen/_2sdp"
                        android:layout_marginEnd="@dimen/_5sdp"
                        android:text="@{result.vehiclesValue}"
-                       android:textColor="@android:color/black"
+                       android:textColor="@android:color/white"
                        android:textSize="@dimen/_12ssp" />
 
                </RelativeLayout>
@@ -516,7 +521,7 @@
            <View
                android:layout_width="match_parent"
                android:layout_height="@dimen/_2sdp"
-               android:background="@color/black"/>
+               android:background="@color/white"/>
 
            <LinearLayout
                android:layout_width="match_parent"
@@ -538,7 +543,7 @@
                        android:layout_marginTop="@dimen/_5sdp"
                        android:layout_marginEnd="@dimen/_5sdp"
                        android:text="@string/species"
-                       android:textColor="@android:color/black"
+                       android:textColor="@android:color/white"
                        android:textSize="@dimen/_10ssp" />
 
                    <TextView
@@ -551,14 +556,14 @@
                        android:layout_marginTop="@dimen/_2sdp"
                        android:layout_marginEnd="@dimen/_5sdp"
                        android:text="@{result.speciesValue}"
-                       android:textColor="@android:color/black"
+                       android:textColor="@android:color/white"
                        android:textSize="@dimen/_12ssp" />
 
                </RelativeLayout>
                <View
                    android:layout_width="2dp"
                    android:layout_height="match_parent"
-                   android:background="@color/black"/>
+                   android:background="@color/white"/>
                <RelativeLayout
                    android:layout_margin="@dimen/_5sdp"
                    android:layout_width="0dp"
@@ -574,7 +579,7 @@
                        android:layout_marginTop="@dimen/_5sdp"
                        android:layout_marginEnd="@dimen/_5sdp"
                        android:text="@string/starships"
-                       android:textColor="@android:color/black"
+                       android:textColor="@android:color/white"
                        android:textSize="@dimen/_10ssp" />
 
                    <TextView
@@ -587,7 +592,7 @@
                        android:layout_marginTop="@dimen/_2sdp"
                        android:layout_marginEnd="@dimen/_5sdp"
                        android:text="@{result.starshipsValue}"
-                       android:textColor="@android:color/black"
+                       android:textColor="@android:color/white"
                        android:textSize="@dimen/_12ssp" />
 
                </RelativeLayout>
@@ -595,92 +600,15 @@
            </LinearLayout>
        </LinearLayout>
 
-        <View
-            android:id="@+id/v_hor4"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_2sdp"
-            android:layout_marginBottom="@dimen/_1sdp"
-            android:layout_below="@+id/ll_low"
-            android:background="@color/black" />
-
-        <LinearLayout
-            android:id="@+id/ll_bot"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/v_hor4"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_5sdp">
-
-                <TextView
-                    android:id="@+id/tv_edited"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/edited"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/_10ssp" />
-
-                <TextView
-                    android:id="@+id/edited"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_edited"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    android:text="@{result.edited}"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/_10ssp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_5sdp">
-
-                <TextView
-                    android:id="@+id/tv_created"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/created"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/_10ssp" />
-
-                <TextView
-                    android:id="@+id/created"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_created"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    android:text="@{result.created}"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/_10ssp" />
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
     </RelativeLayout>
 
     <View
         android:id="@+id/v_hor2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_2sdp"
-        android:layout_below="@+id/ll_bot"
-        android:background="@color/black" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/rl_expand"
+        android:background="@color/white" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
 

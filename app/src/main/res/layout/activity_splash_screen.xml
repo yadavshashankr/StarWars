@@ -27,10 +27,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <ImageView
+            android:id="@+id/iv_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_6sdp"
+            android:visibility="gone"
+            android:src="@drawable/baseline_refresh_white_24"
+            app:layout_constraintEnd_toEndOf="@+id/pb_people"
+            app:layout_constraintTop_toTopOf="parent"/>
         <TextView
+            android:id="@+id/tv_people_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_refresh"
             app:layout_constraintBottom_toTopOf="@+id/pb_people"
             android:textColor="@color/white"
             android:textSize="@dimen/_12ssp"
@@ -43,11 +54,10 @@
             android:progressTint="@color/white"
             android:background="@color/black"
             android:indeterminate="false"
-            android:layout_margin="@dimen/_20sdp"
+            android:layout_marginHorizontal="@dimen/_20sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_people_label"
             app:layout_constraintStart_toStartOf="parent"
             style="?android:attr/progressBarStyleHorizontal"
             app:layout_constraintEnd_toEndOf="parent"/>

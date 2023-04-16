@@ -5,6 +5,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.filmArticles
+import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.initData
 import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.peopleArticles
 import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.planetArticles
 import com.example.maytheforcebewith_shashankyadav.globals.ApplicationConstant.Companion.speciesArticles
@@ -18,7 +19,7 @@ import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
 
-class MainPresenter : CoroutineScope {
+class MainPresenter(presenter: IPresenter) : CoroutineScope {
 
 
     private var planetsTask: Response<Planets1>? = null
@@ -72,11 +73,20 @@ class MainPresenter : CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
-    constructor(presenter: IPresenter) {
+    init {
         if (iPresenter == null) {
             iPresenter = presenter
         }
+    }
 
+    fun initApis(){
+        initData()
+        getPlanetsApis(1)
+        getPeopleApis(1)
+        getFilmsApis(1)
+        getSpeciesApis(1)
+        getVehiclesApis(1)
+        getStarshipsApis(1)
     }
 
     fun getPlanetsApis(page: Int): Percentage {
